@@ -1,0 +1,535 @@
+{
+  "sale": {
+    "rows": 38058,
+    "n_states": 29,
+    "summary": {
+      "price": {
+        "count": 38058,
+        "mean": 576312.7483,
+        "median": 399900.0,
+        "std": 565847.245,
+        "min": 30000.0,
+        "max": 5000000.0
+      },
+      "living_space": {
+        "count": 38058,
+        "mean": 1869.5802,
+        "median": 1637.5,
+        "std": 980.1448,
+        "min": 300.0,
+        "max": 14347.0
+      },
+      "beds": {
+        "count": 38058,
+        "mean": 3.1387,
+        "median": 3.0,
+        "std": 1.0728,
+        "min": 1.0,
+        "max": 10.0
+      },
+      "baths": {
+        "count": 38058,
+        "mean": 2.4275,
+        "median": 2.0,
+        "std": 1.0808,
+        "min": 1.0,
+        "max": 10.0
+      },
+      "zip_code_density": {
+        "count": 38058,
+        "mean": 2365.9856,
+        "median": 1588.7,
+        "std": 2914.5955,
+        "min": 0.6,
+        "max": 58289.6
+      },
+      "median_household_income": {
+        "count": 38058,
+        "mean": 110718.118,
+        "median": 100587.0,
+        "std": 46470.5992,
+        "min": 27475.0,
+        "max": 389928.0
+      }
+    },
+    "spearman_correlation": {
+      "price": {
+        "price": 1.0,
+        "living_space": 0.5091,
+        "beds": 0.2866,
+        "baths": 0.5096,
+        "zip_code_density": 0.1757,
+        "median_household_income": 0.6372
+      },
+      "living_space": {
+        "price": 0.5091,
+        "living_space": 1.0,
+        "beds": 0.7235,
+        "baths": 0.7727,
+        "zip_code_density": -0.2615,
+        "median_household_income": 0.2453
+      },
+      "beds": {
+        "price": 0.2866,
+        "living_space": 0.7235,
+        "beds": 1.0,
+        "baths": 0.5948,
+        "zip_code_density": -0.2244,
+        "median_household_income": 0.0269
+      },
+      "baths": {
+        "price": 0.5096,
+        "living_space": 0.7727,
+        "beds": 0.5948,
+        "baths": 1.0,
+        "zip_code_density": -0.1909,
+        "median_household_income": 0.2798
+      },
+      "zip_code_density": {
+        "price": 0.1757,
+        "living_space": -0.2615,
+        "beds": -0.2244,
+        "baths": -0.1909,
+        "zip_code_density": 1.0,
+        "median_household_income": 0.0418
+      },
+      "median_household_income": {
+        "price": 0.6372,
+        "living_space": 0.2453,
+        "beds": 0.0269,
+        "baths": 0.2798,
+        "zip_code_density": 0.0418,
+        "median_household_income": 1.0
+      }
+    },
+    "by_state": {
+      "WA": {
+        "count": 797,
+        "median": 829000.0
+      },
+      "CA": {
+        "count": 5632,
+        "median": 795000.0
+      },
+      "NY": {
+        "count": 510,
+        "median": 699999.5
+      },
+      "DC": {
+        "count": 835,
+        "median": 675000.0
+      },
+      "OR": {
+        "count": 844,
+        "median": 529950.0
+      },
+      "CO": {
+        "count": 1693,
+        "median": 510000.0
+      },
+      "NC": {
+        "count": 1746,
+        "median": 439900.0
+      },
+      "NV": {
+        "count": 841,
+        "median": 435000.0
+      },
+      "GA": {
+        "count": 504,
+        "median": 429990.0
+      },
+      "FL": {
+        "count": 1524,
+        "median": 425000.0
+      },
+      "AZ": {
+        "count": 2599,
+        "median": 425000.0
+      },
+      "VA": {
+        "count": 876,
+        "median": 407250.0
+      },
+      "TN": {
+        "count": 1570,
+        "median": 395000.0
+      },
+      "LA": {
+        "count": 770,
+        "median": 364450.0
+      },
+      "NM": {
+        "count": 863,
+        "median": 358800.0
+      },
+      "TX": {
+        "count": 5588,
+        "median": 350915.0
+      },
+      "IL": {
+        "count": 553,
+        "median": 345000.0
+      },
+      "MN": {
+        "count": 803,
+        "median": 311000.0
+      },
+      "NE": {
+        "count": 849,
+        "median": 295000.0
+      },
+      "OH": {
+        "count": 823,
+        "median": 279900.0
+      },
+      "OK": {
+        "count": 1647,
+        "median": 269500.0
+      },
+      "PA": {
+        "count": 739,
+        "median": 265000.0
+      },
+      "MD": {
+        "count": 720,
+        "median": 259900.0
+      },
+      "KY": {
+        "count": 872,
+        "median": 250000.0
+      },
+      "IN": {
+        "count": 855,
+        "median": 249900.0
+      },
+      "MO": {
+        "count": 717,
+        "median": 245000.0
+      },
+      "KS": {
+        "count": 884,
+        "median": 241995.0
+      },
+      "WI": {
+        "count": 667,
+        "median": 195000.0
+      },
+      "MI": {
+        "count": 737,
+        "median": 95000.0
+      }
+    }
+  },
+  "rent": {
+    "rows": 98827,
+    "n_states": 51,
+    "summary": {
+      "rent": {
+        "count": 98827,
+        "mean": 1519.4798,
+        "median": 1350.0,
+        "std": 799.0755,
+        "min": 200.0,
+        "max": 15000.0
+      },
+      "square_feet": {
+        "count": 98827,
+        "mean": 954.7305,
+        "median": 900.0,
+        "std": 353.6786,
+        "min": 150.0,
+        "max": 7104.0
+      },
+      "bedrooms": {
+        "count": 98827,
+        "mean": 1.7281,
+        "median": 2.0,
+        "std": 0.7471,
+        "min": 0.0,
+        "max": 9.0
+      },
+      "bathrooms": {
+        "count": 98827,
+        "mean": 1.445,
+        "median": 1.0,
+        "std": 0.5433,
+        "min": 1.0,
+        "max": 7.0
+      },
+      "latitude": {
+        "count": 98827,
+        "mean": 36.9405,
+        "median": 37.2139,
+        "std": 4.6054,
+        "min": 19.5738,
+        "max": 64.8332
+      },
+      "longitude": {
+        "count": 98827,
+        "mean": -91.5437,
+        "median": -84.5465,
+        "std": 15.8225,
+        "min": -159.3698,
+        "max": -68.7788
+      }
+    },
+    "spearman_correlation": {
+      "rent": {
+        "rent": 1.0,
+        "square_feet": 0.37,
+        "bedrooms": 0.2286,
+        "bathrooms": 0.3102,
+        "latitude": 0.136,
+        "longitude": 0.0305
+      },
+      "square_feet": {
+        "rent": 0.37,
+        "square_feet": 1.0,
+        "bedrooms": 0.7258,
+        "bathrooms": 0.7674,
+        "latitude": -0.0235,
+        "longitude": 0.0925
+      },
+      "bedrooms": {
+        "rent": 0.2286,
+        "square_feet": 0.7258,
+        "bedrooms": 1.0,
+        "bathrooms": 0.7004,
+        "latitude": 0.0177,
+        "longitude": 0.0414
+      },
+      "bathrooms": {
+        "rent": 0.3102,
+        "square_feet": 0.7674,
+        "bedrooms": 0.7004,
+        "bathrooms": 1.0,
+        "latitude": -0.097,
+        "longitude": -0.0153
+      },
+      "latitude": {
+        "rent": 0.136,
+        "square_feet": -0.0235,
+        "bedrooms": 0.0177,
+        "bathrooms": -0.097,
+        "latitude": 1.0,
+        "longitude": 0.2713
+      },
+      "longitude": {
+        "rent": 0.0305,
+        "square_feet": 0.0925,
+        "bedrooms": 0.0414,
+        "bathrooms": -0.0153,
+        "latitude": 0.2713,
+        "longitude": 1.0
+      }
+    },
+    "by_state": {
+      "CA": {
+        "count": 10220,
+        "median": 2195.0
+      },
+      "MA": {
+        "count": 5019,
+        "median": 2080.0
+      },
+      "NY": {
+        "count": 646,
+        "median": 2055.0
+      },
+      "HI": {
+        "count": 31,
+        "median": 2050.0
+      },
+      "RI": {
+        "count": 119,
+        "median": 1985.0
+      },
+      "DC": {
+        "count": 83,
+        "median": 1965.0
+      },
+      "NJ": {
+        "count": 4441,
+        "median": 1911.0
+      },
+      "WA": {
+        "count": 2591,
+        "median": 1741.0
+      },
+      "MD": {
+        "count": 5229,
+        "median": 1575.0
+      },
+      "CO": {
+        "count": 6267,
+        "median": 1479.0
+      },
+      "VT": {
+        "count": 125,
+        "median": 1450.0
+      },
+      "VA": {
+        "count": 8272,
+        "median": 1412.0
+      },
+      "FL": {
+        "count": 5764,
+        "median": 1372.5
+      },
+      "NH": {
+        "count": 733,
+        "median": 1360.0
+      },
+      "OR": {
+        "count": 277,
+        "median": 1298.0
+      },
+      "MN": {
+        "count": 578,
+        "median": 1295.0
+      },
+      "GA": {
+        "count": 4748,
+        "median": 1285.0
+      },
+      "IL": {
+        "count": 1032,
+        "median": 1275.0
+      },
+      "ME": {
+        "count": 30,
+        "median": 1250.0
+      },
+      "UT": {
+        "count": 809,
+        "median": 1200.0
+      },
+      "CT": {
+        "count": 506,
+        "median": 1191.5
+      },
+      "PA": {
+        "count": 1117,
+        "median": 1185.0
+      },
+      "TX": {
+        "count": 11227,
+        "median": 1140.0
+      },
+      "NV": {
+        "count": 2810,
+        "median": 1134.5
+      },
+      "WI": {
+        "count": 428,
+        "median": 1127.5
+      },
+      "NC": {
+        "count": 6291,
+        "median": 1099.0
+      },
+      "MT": {
+        "count": 87,
+        "median": 1095.0
+      },
+      "AZ": {
+        "count": 2370,
+        "median": 1085.0
+      },
+      "SC": {
+        "count": 907,
+        "median": 1080.0
+      },
+      "TN": {
+        "count": 1113,
+        "median": 1070.0
+      },
+      "ID": {
+        "count": 96,
+        "median": 1020.0
+      },
+      "MI": {
+        "count": 709,
+        "median": 1000.0
+      },
+      "OH": {
+        "count": 4894,
+        "median": 979.0
+      },
+      "AK": {
+        "count": 57,
+        "median": 950.0
+      },
+      "MO": {
+        "count": 1201,
+        "median": 948.0
+      },
+      "LA": {
+        "count": 1344,
+        "median": 947.5
+      },
+      "OK": {
+        "count": 932,
+        "median": 942.0
+      },
+      "KY": {
+        "count": 991,
+        "median": 915.0
+      },
+      "ND": {
+        "count": 740,
+        "median": 875.0
+      },
+      "IA": {
+        "count": 371,
+        "median": 875.0
+      },
+      "NE": {
+        "count": 1019,
+        "median": 871.0
+      },
+      "IN": {
+        "count": 503,
+        "median": 850.0
+      },
+      "AL": {
+        "count": 352,
+        "median": 840.0
+      },
+      "KS": {
+        "count": 898,
+        "median": 837.0
+      },
+      "MS": {
+        "count": 107,
+        "median": 825.0
+      },
+      "DE": {
+        "count": 7,
+        "median": 825.0
+      },
+      "AR": {
+        "count": 597,
+        "median": 820.0
+      },
+      "SD": {
+        "count": 86,
+        "median": 792.5
+      },
+      "NM": {
+        "count": 24,
+        "median": 744.5
+      },
+      "WV": {
+        "count": 13,
+        "median": 714.0
+      },
+      "WY": {
+        "count": 16,
+        "median": 706.5
+      }
+    }
+  },
+  "notes": "Correlation is Spearman (rank). Rent coordinates are listing lat/long; sale data has no coordinates."
+}
