@@ -1,0 +1,13 @@
+{
+  "raw_rows": 99492,
+  "after_category_monthly_usd": 99427,
+  "after_rent_200_15000": 99402,
+  "after_sqft_150_8000": 99382,
+  "after_drop_duplicate_ids": 99298,
+  "after_drop_missing": 98827,
+  "final_rows": 98827,
+  "n_states": 51,
+  "listed_date_min": "2018-12-07",
+  "listed_date_max": "2019-12-26",
+  "repeated_units_same_address_size_rent": 14530
+}

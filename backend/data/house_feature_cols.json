@@ -1,0 +1,18 @@
+[
+  "State",
+  "City",
+  "Zipcode",
+  "Bedroom",
+  "Bathroom",
+  "Area",
+  "LotArea",
+  "MarketEstimate",
+  "Latitude",
+  "Longitude",
+  "state_unemployment_rate",
+  "state_building_permits",
+  "state_real_gdp_yoy",
+  "mortgage_rate",
+  "interest_rate",
+  "cpi_yoy"
+]

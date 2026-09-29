@@ -1,0 +1,32 @@
+# Python 3.14 (tested with 3.14.7 on Windows 11). Exact versions pinned for reproducibility.
+# Install: see setup_env.ps1
+
+# Data
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+
+# Models (sale/rent price models, forecast model, ARIMA baseline)
+scikit-learn==1.9.1
+xgboost==3.4.1
+catboost==1.2.10
+statsmodels==0.15.0
+joblib==1.6.0
+
+# Explainability
+shap==0.52.0
+
+# Figures
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# Excel export of engine test scenarios (Step 6)
+openpyxl==3.1.5
+
+# API (existing back end is Flask)
+Flask==3.1.3
+flask-cors==6.0.5
+pydantic==2.13.5
+
+# Tests
+pytest==9.1.1
