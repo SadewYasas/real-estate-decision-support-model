@@ -37,6 +37,7 @@ from src.config import MODELS_DIR, PROCESSED_DIR, RAW_DIR, ensure_dirs
 
 HPI_HORIZON = 4      # quarters
 RENT_HORIZON = 12    # months
+RENT_FACTOR_REFERENCE = "2025-09"  # = rent forecast origin (latest FRED month)
 
 HPI_MACRO = ["unemp", "unemp_chg12", "permits_g", "gdp_g", "mortgage", "mortgage_chg12",
              "fed_funds", "cpi_infl"]
@@ -181,16 +182,23 @@ def build_rent_panel() -> pd.DataFrame:
 
 # ----------------------------------------------------------------------------- CPI factors
 def cpi_rent_factors() -> dict:
+    """CPI rent in the rent forecast origin month / CPI rent in each listing month.
+
+    The reference month is the rent forecast origin (RENT_FACTOR_REFERENCE), not the latest
+    CPI month: the rent level and the 12-month rent growth forecast then start from the
+    same date, so growth already observed after the origin is not counted twice.
+    """
     rent = load_cpi_rent()
+    ref = pd.Period(RENT_FACTOR_REFERENCE, freq="M")
     listings = pd.read_csv(PROCESSED_DIR / "rent_clean.csv", usecols=["listed_date"])
     counts = pd.to_datetime(listings["listed_date"]).dt.to_period("M").value_counts().sort_index()
-    latest = rent.last_valid_index()
-    factors = {str(m): float(rent[latest] / rent[m]) for m in counts.index}
+    factors = {str(m): float(rent[ref] / rent[m]) for m in counts.index}
     weighted = float(sum(factors[str(m)] * n for m, n in counts.items()) / counts.sum())
     return {
         "series": "CUUR0000SEHA (CPI rent of primary residence, US city average, NSA)",
-        "reference_month": str(latest),
-        "reference_index": float(rent[latest]),
+        "reference_month": str(ref),
+        "reference_index": float(rent[ref]),
+        "reference_reason": "rent forecast origin; the rent growth forecast starts here",
         "factor_by_listing_month": factors,
         "listings_by_month": {str(m): int(n) for m, n in counts.items()},
         "listing_weighted_factor": weighted,

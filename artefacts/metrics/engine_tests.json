@@ -1,0 +1,761 @@
+{
+  "run_at": "2026-10-03 00:03:24",
+  "python": "3.14.7",
+  "manual_scenarios": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "property_and_validation_tests": {
+    "passed": 28,
+    "failed": 0
+  },
+  "scenarios": [
+    {
+      "id": "S01",
+      "name": "Cash purchase, zero growth, no costs",
+      "hand": "C_B = (1+0)100,000 + 0 - (100,000 x 1 - 0) = 0. C_R = 12 x 500 = 6,000. Delta = 6,000 >= 0 in year 1.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 6000.0,
+          "engine": 6000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 6000.0,
+          "engine": 6000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 6000.0,
+          "engine": 6000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 6000.0,
+          "engine": 6000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S02",
+      "name": "Zero growth with running and transaction costs (100% down)",
+      "hand": "Upfront (1+0.03)200,000 = 206,000. Running 0.02 x 200,000 = 4,000 a year. Sale 200,000 x 0.94 = 188,000. C_B(5) = 206,000 + 20,000 - 188,000 = 38,000. C_R(5) = 60,000. In general Delta(H) = 12,000H - (18,000 + 4,000H) = 8,000H - 18,000: H=2 gives -2,000, H=3 gives +6,000, so break-even = 3. The mortgage rate is irrelevant because nothing is borrowed.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 38000.0,
+          "engine": 38000.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 60000.0,
+          "engine": 60000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 22000.0,
+          "engine": 22000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 3,
+          "engine": 3,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 4000.0,
+          "engine": 4000.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 38000.0,
+          "engine": 38000.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 60000.0,
+          "engine": 60000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 22000.0,
+          "engine": 22000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 3,
+          "engine": 3,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S03",
+      "name": "Interest-free mortgage, holding period shorter than term",
+      "hand": "L = 0.75 x 120,000 = 90,000; r = 0 so M = 90,000 / 180 = 500. B_5 = 90,000 - 60 x 500 = 60,000. O_t = 6,000. C_B(5) = 30,000 + 30,000 - (120,000 - 60,000) = 0. C_R(5) = 5 x 8,400 = 42,000.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 500.0,
+          "engine": 500.0,
+          "pass": true
+        },
+        {
+          "check": "balance_H vs hand calculation",
+          "expected": 60000.0,
+          "engine": 60000.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 42000.0,
+          "engine": 42000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 42000.0,
+          "engine": 42000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 500.0,
+          "engine": 500.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 42000.0,
+          "engine": 42000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 42000.0,
+          "engine": 42000.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S04",
+      "name": "Holding period longer than mortgage term (H > T)",
+      "hand": "M = 90,000 / 60 = 1,500; O_t = 18,000 for t = 1..5 and 0 for t = 6, 7 (loan repaid, no running costs). B_7 = 0. C_B(7) = 30,000 + 90,000 - 120,000 = 0. C_R(7) = 7 x 8,400 = 58,800.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 1500.0,
+          "engine": 1500.0,
+          "pass": true
+        },
+        {
+          "check": "balance_H vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 58800.0,
+          "engine": 58800.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 58800.0,
+          "engine": 58800.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 1500.0,
+          "engine": 1500.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 58800.0,
+          "engine": 58800.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 58800.0,
+          "engine": 58800.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S05",
+      "name": "100% down payment with appreciation and discounting",
+      "hand": "V_2 = 100,000 x 1.1^2 = 121,000; C_B(2) = 100,000 - 121,000 / 1.21 = 0. C_R(2) = 12,000/1.1 + 12,000/1.21 = 10,909.09 + 9,917.36 = 20,826.45. UC = (0.10 - 0.10) x P = 0.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 20826.45,
+          "engine": 20826.44628099173,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 20826.45,
+          "engine": 20826.44628099173,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": -1.4551915228366852e-11,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 20826.44628099173,
+          "engine": 20826.44628099173,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 20826.446280991746,
+          "engine": 20826.44628099173,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S06",
+      "name": "Rent growth compounding",
+      "hand": "Rent_1 = 12,000; Rent_2 = 12,000 x 1.05 = 12,600; Rent_3 = 12,000 x 1.05^2 = 13,230. C_R(3) = 37,830 (k = 0). C_B = 500,000 - 500,000 = 0.",
+      "checks": [
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 37830.0,
+          "engine": 37830.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 37830.0,
+          "engine": 37830.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 37830.0,
+          "engine": 37830.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 37830.0,
+          "engine": 37830.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S07",
+      "name": "Standard 30-year mortgage (published payment check)",
+      "hand": "L = 240,000 at 6% over 30 years: M = 240,000 x 0.005 x 1.005^360 / (1.005^360 - 1) = 1,438.92, the standard published value. Costs and break-even are checked against the independent monthly calculation and Excel.",
+      "checks": [
+        {
+          "check": "monthly_payment vs hand calculation",
+          "expected": 1438.92,
+          "engine": 1438.9212603666167,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 1438.921260366586,
+          "engine": 1438.9212603666167,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 119722.01325979231,
+          "engine": 119722.0132597951,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 113356.4448848213,
+          "engine": 113356.4448848213,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": -6365.568374971001,
+          "engine": -6365.568374973795,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 10,
+          "engine": 10,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S08",
+      "name": "Buying never breaks even (price very high relative to rent)",
+      "hand": "C_R(30) = 12,000 x 15.372 (30-year annuity factor at 5%) = 184,469. C_B(30) is at least the upfront 230,000 minus the discounted sale proceeds 940,000 / 1.05^30 = 217,497, plus positive running costs, so C_B > 12,503 + PV(mortgage 57,552 a year) >> C_R for every H <= 30. UC = (0.05 + 0.0235 - 0) x 1,000,000 = 73,500 > 12,000.",
+      "checks": [
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": null,
+          "engine": null,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "rent",
+          "engine": "rent",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 73500.0,
+          "engine": 73500.00000000001,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 4796.404201221953,
+          "engine": 4796.404201222055,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 540625.0565698382,
+          "engine": 540625.0565698488,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 69436.48076877081,
+          "engine": 69436.48076877081,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": -471188.5758010674,
+          "engine": -471188.575801078,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": null,
+          "engine": null,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S09",
+      "name": "User cost check with default assumptions",
+      "hand": "UC = (0.05 + 0.01 + 0.01 + 0.0035 - 0.03) x 300,000 = 0.0435 x 300,000 = 13,050 < 12 x 1,200 = 14,400, so the user-cost rule says buy.",
+      "checks": [
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 13050.0,
+          "engine": 13050.000000000004,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 1438.921260366586,
+          "engine": 1438.9212603666167,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 119722.01325979231,
+          "engine": 119722.0132597951,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 90685.15590785706,
+          "engine": 90685.15590785706,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": -29036.85735193525,
+          "engine": -29036.857351938044,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": null,
+          "engine": null,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S10",
+      "name": "Negative appreciation",
+      "hand": "V_2 = 200,000 x 0.95^2 = 180,500; C_B(2) = 200,000 - 180,500 = 19,500. C_R(2) = 24,000. Year 1: C_B = 10,000 < C_R = 12,000. UC = (0 - (-0.05)) x 200,000 = 10,000.",
+      "checks": [
+        {
+          "check": "cost_buy vs hand calculation",
+          "expected": 19500.0,
+          "engine": 19500.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs hand calculation",
+          "expected": 24000.0,
+          "engine": 24000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs hand calculation",
+          "expected": 4500.0,
+          "engine": 4500.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs hand calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        },
+        {
+          "check": "recommendation vs hand calculation",
+          "expected": "buy",
+          "engine": "buy",
+          "pass": true
+        },
+        {
+          "check": "user_cost vs hand calculation",
+          "expected": 10000.0,
+          "engine": 10000.0,
+          "pass": true
+        },
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 0.0,
+          "engine": 0.0,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 19500.0,
+          "engine": 19500.0,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 24000.0,
+          "engine": 24000.0,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 4500.0,
+          "engine": 4500.0,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 1,
+          "engine": 1,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    },
+    {
+      "id": "S11",
+      "name": "Typical case: defaults, latest mortgage rate and forecasts",
+      "hand": "No closed form; checked against the independent monthly calculation and the Excel formulas (r = Sep 2025 mortgage rate, g and q = mean forecasts).",
+      "checks": [
+        {
+          "check": "monthly_payment vs independent monthly calculation",
+          "expected": 1991.6769372308308,
+          "engine": 1991.676937230794,
+          "pass": true
+        },
+        {
+          "check": "cost_buy vs independent monthly calculation",
+          "expected": 149467.46387094166,
+          "engine": 149467.46387093712,
+          "pass": true
+        },
+        {
+          "check": "cost_rent vs independent monthly calculation",
+          "expected": 153609.2355156008,
+          "engine": 153609.2355156008,
+          "pass": true
+        },
+        {
+          "check": "delta vs independent monthly calculation",
+          "expected": 4141.771644659137,
+          "engine": 4141.771644663677,
+          "pass": true
+        },
+        {
+          "check": "break_even_year vs independent monthly calculation",
+          "expected": 7,
+          "engine": 7,
+          "pass": true
+        }
+      ],
+      "outcome": "passed"
+    }
+  ],
+  "excel_check_workbook": "artefacts/engine_test_scenarios.xlsx",
+  "excel_check": {
+    "workbook": "artefacts/engine_test_scenarios.xlsx",
+    "recalculated_with": "Microsoft Excel",
+    "formula_errors": 0,
+    "values_compared": 99,
+    "values_matching": 99,
+    "workbook_summary_cell": "ALL PASS",
+    "mismatches": []
+  }
+}
