@@ -1,0 +1,39 @@
+{
+  "dataset": "rent",
+  "model": "catboost",
+  "features": [
+    "state",
+    "bedrooms",
+    "bathrooms",
+    "square_feet",
+    "latitude",
+    "longitude"
+  ],
+  "categorical": [
+    "state"
+  ],
+  "target": "log(rent)",
+  "best_params": {
+    "depth": 8,
+    "iterations": 1140,
+    "l2_leaf_reg": 1.1615865989246452,
+    "learning_rate": 0.1777933581403786
+  },
+  "test": {
+    "mae_usd": 208.85243314319587,
+    "rmse_usd": 364.3902257793118,
+    "mape_usd": 0.13628099527007584,
+    "r2_usd": 0.7915825682898445,
+    "r2_log": 0.823726194577508,
+    "rmse_log": 0.18267135595328787
+  },
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "xgboost": "3.4.1",
+    "catboost": "1.2.10",
+    "shap": "0.52.0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "dataset": "sale",
+  "model": "catboost",
+  "features": [
+    "state_code",
+    "beds",
+    "baths",
+    "living_space",
+    "zip_code_density",
+    "median_household_income"
+  ],
+  "categorical": [
+    "state_code"
+  ],
+  "target": "log(price)",
+  "best_params": {
+    "depth": 8,
+    "iterations": 1423,
+    "l2_leaf_reg": 1.3895264494261033,
+    "learning_rate": 0.08951966918518126
+  },
+  "test": {
+    "mae_usd": 120035.56026583462,
+    "rmse_usd": 240673.84987657767,
+    "mape_usd": 0.21993384919196898,
+    "r2_usd": 0.82881893307414,
+    "r2_log": 0.8566917674562529,
+    "rmse_log": 0.2898597771864087
+  },
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "xgboost": "3.4.1",
+    "catboost": "1.2.10",
+    "shap": "0.52.0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6"
+  }
+}

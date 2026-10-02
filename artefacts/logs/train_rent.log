@@ -1,0 +1,24 @@
+
+===== 2026-10-02 21:46:12  dataset=rent  fresh=False =====
+[rent] linear_regression ... started 21:46:12
+    CV RMSE(log) 0.2872 ± 0.0028 | test R²(log) 0.5688 | 2.7s
+[rent] random_forest ... started 21:46:15
+    CV RMSE(log) 0.1924 ± 0.0017 | test R²(log) 0.8189 | 671.1s
+[rent] xgboost ... started 21:57:37
+    CV RMSE(log) 0.1885 ± 0.0025 | test R²(log) 0.8238 | 98.7s
+[rent] catboost ... started 21:59:16
+    CV RMSE(log) 0.1871 ± 0.0022 | test R²(log) 0.8237 | 5201.0s
+[rent] ablation no_coords (catboost, same hyper-parameters) ...
+[rent] ungrouped random-split comparison (catboost) ...
+
+RENT MODELS  (train 78,935 / test 19,892)
+  model                   CV RMSE(log)      CV R2(log)  test R2 log  test R2 $    MAPE      MAE $     RMSE $
+  linear_regression      0.2872 ±0.0028   0.5664 ±0.006       0.5688     0.4909   22.2%        341        570
+  random_forest          0.1924 ±0.0017   0.8054 ±0.003       0.8189     0.7922   13.8%        209        364
+  xgboost                0.1885 ±0.0025   0.8131 ±0.005       0.8238     0.7912   13.6%        209        365
+  catboost *             0.1871 ±0.0022   0.8160 ±0.004       0.8237     0.7916   13.6%        209        364
+  * selected by lowest mean CV RMSE (log)
+  ablation no_coords (drop latitude, longitude): CV RMSE(log) 0.2772, test R2 log 0.6111, MAPE 20.9%
+  ungrouped random split (comparison only): test R2 log 0.8430, MAPE 12.6%
+
+Finished in 105.9 min
