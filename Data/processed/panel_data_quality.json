@@ -1,0 +1,19 @@
+{
+  "fred_placeholders_set_to_missing": {
+    "state_unemployment_rate": [
+      "2025-09"
+    ],
+    "state_building_permits": [
+      "2025-09"
+    ],
+    "cpi": [
+      "2025-09"
+    ],
+    "building_permits": [
+      "2025-09"
+    ]
+  },
+  "cpi_rent_missing_months_since_2012": [
+    "2025-10"
+  ]
+}
