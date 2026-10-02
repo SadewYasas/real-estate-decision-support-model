@@ -130,6 +130,36 @@
       "n_origins": 30,
       "better": "persistence"
     },
+    "dm_tests_vs_recommended": {
+      "gbm_macro": {
+        "mean_loss_difference": -0.2808950196265003,
+        "dm_stat": -0.3646793385003372,
+        "p_value": 0.715350783481862,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "gbm_no_macro": {
+        "mean_loss_difference": -21.291236815128638,
+        "dm_stat": -2.027761916729343,
+        "p_value": 0.04258455291855756,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "persistence": {
+        "mean_loss_difference": -14.451396848814943,
+        "dm_stat": -1.0770277814620774,
+        "p_value": 0.2814678545066389,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "arima": {
+        "mean_loss_difference": -7.420256222050122,
+        "dm_stat": -1.2698328446773945,
+        "p_value": 0.20414417847916821,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      }
+    },
     "macro_improves_on_no_macro": true,
     "gbm_macro_beats_persistence": true,
     "gbm_selection": {
@@ -731,6 +761,29 @@
       "p_value": 0.8449500032340023,
       "n_origins": 91,
       "better": "persistence"
+    },
+    "dm_tests_vs_recommended": {
+      "gbm_macro": {
+        "mean_loss_difference": -1.4569536146077466,
+        "dm_stat": -1.613453155480704,
+        "p_value": 0.10664609271750325,
+        "n_origins": 91,
+        "better": "arima"
+      },
+      "gbm_no_macro": {
+        "mean_loss_difference": -2.601934725235816,
+        "dm_stat": -2.0037463075219764,
+        "p_value": 0.04509724303842089,
+        "n_origins": 91,
+        "better": "arima"
+      },
+      "persistence": {
+        "mean_loss_difference": -2.3687241433984085,
+        "dm_stat": -2.675092763246799,
+        "p_value": 0.00747085755493293,
+        "n_origins": 91,
+        "better": "arima"
+      }
     },
     "macro_improves_on_no_macro": true,
     "gbm_macro_beats_persistence": true,

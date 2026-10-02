@@ -258,6 +258,8 @@ def evaluate(name: str, spec: dict, bt: pd.DataFrame) -> dict:
                                                   for b in ms if b != "gbm_macro_constrained"}}
            if "gbm_macro_constrained" in ms else {}),
         "dm_test_gbm_no_macro_vs_persistence": dm_test(bt, "gbm_no_macro", "persistence", lag),
+        # The method actually used for the forecasts (e.g. ARIMA for rent) against every other one.
+        "dm_tests_vs_recommended": {b: dm_test(bt, best, b, lag) for b in ms if b != best},
         "macro_improves_on_no_macro": bool(metrics["gbm_macro"]["rmse"] < metrics["gbm_no_macro"]["rmse"]),
         "gbm_macro_beats_persistence": bool(metrics["gbm_macro"]["rmse"] < metrics["persistence"]["rmse"]),
         "gbm_selection": selection,

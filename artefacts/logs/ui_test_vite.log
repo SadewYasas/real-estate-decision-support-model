@@ -1,16 +1,6 @@
-
-  [32m[1mVITE[22m v7.1.10[39m  [2mready in [0m[1m369[22m[2m[0m ms[22m
-
-  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
-[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
-[2m12:43:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1864:16)
-[2m12:43:05 AM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/health[39m
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1864:16)
-[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
-[2m12:44:18 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/SensitivityTab.jsx[22m
-[2m12:46:36 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/DecisionPanel.jsx[22m
-[2m12:46:36 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/ScenarioTab.jsx[22m
-[2m12:48:15 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/components/DecisionPanel.jsx[22m
+[31merror when starting dev server:
+Error: Port 5173 is already in use
+    at Server.onError$1 (file:///D:/forcasting%20model/frontend/node_modules/vite/dist/node/chunks/dep-B0GuR2De.js:18352:28)
+    at Server.emit (node:events:509:28)
+    at emitErrorNT (node:net:2203:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m

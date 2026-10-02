@@ -3,19 +3,17 @@
 Reference for writing Chapter 5. Every number below is read from a file in `artefacts/`
 (named in each table), produced by the code in `src/`. Nothing is estimated by hand.
 
-> **Objectives O1–O6.** The objective wording is not stored in the repository, so this
-> summary uses the mapping below, taken from the system description in `CLAUDE.md`. If
-> your Chapter 1 objectives are worded or numbered differently, keep the evidence and
-> change the labels.
->
-> | ID | Objective (as assumed here) |
-> |----|-----------------------------|
-> | O1 | Predict the current sale price of a US home from location and size (ML model 1) |
-> | O2 | Predict the monthly rent of an equivalent home (ML model 2) |
-> | O3 | Forecast next-year house price appreciation (state) and rent growth from macroeconomic indicators, and test whether the indicators help (RQ4) |
-> | O4 | Build a transparent rent-versus-buy NPV engine with break-even, sensitivity and macro scenarios |
-> | O5 | Explain the price and rent predictions (SHAP) |
-> | O6 | Integrate everything in a usable, fast decision-support system and show that forecast-based growth changes decisions (the research gap) |
+## Objectives (Chapter 1) and research gap
+
+| ID | Objective | Evidence in this summary |
+|----|-----------|--------------------------|
+| O1 | Identify and compare the features that most influence sale price and rent (SHAP) | §6.1 |
+| O2 | Sale price model with R² ≥ 0.80 on held-out data, beating a linear baseline | §6.2 |
+| O3 | Rent model with an aligned feature set, beating a linear baseline | §6.3 |
+| O4 | Macroeconomic forecast of 12-month appreciation and rent growth, beating a naive persistence baseline out-of-sample | §6.4 |
+| O5 | Rent-vs-buy NPV engine with break-even, sensitivity and scenarios, verified against manual calculations | §4, §6.5 |
+| O6 | Evaluate the integrated system: predictive performance, usability (SUS ≥ 68) and perceived usefulness (TAM) | §5, §6.2–6.4, §8 |
+| Gap | Rent-vs-buy tools assume fixed growth; does forecast-based growth change the decision? | §6.6 (decision-flip experiment) |
 
 ---
 
@@ -131,13 +129,15 @@ misaligned. Source: `data/processed/panel_data_quality.json`.
 
 ## 3. Chapter 5 – Evaluation Criteria
 
-| What is evaluated | Criteria | Protocol |
-|-------------------|----------|----------|
-| Price and rent models (O1, O2) | MAE, RMSE, MAPE and R² in dollars; R² and RMSE on log scale; CV mean ± std | Grouped 80/20 split; 5-fold GroupKFold on train; RandomizedSearchCV (20 settings); selection by lowest mean CV RMSE (log). The linear regression baseline is always reported |
-| Forecasts (O3) | MAE and RMSE (percentage points of growth); directional accuracy; acceleration accuracy (did growth speed up or slow down vs last year); 10th/90th percentile error band and its coverage; Diebold–Mariano test (Newey–West, lag = horizon − 1) | Expanding-window rolling origin from 2018: HPI 30 quarterly origins × 51 states, rent 91 monthly origins. Baselines: persistence, ARIMA, the same model without macro features |
-| Engine (O4) | Pass/fail per scenario, to the cent | 11 hand-calculated scenarios checked three ways (hand, independent month-by-month code, Excel formulas) plus property tests |
-| Explanations (O5) | SHAP contributions must reconstruct each prediction exactly | Tested in `tests/test_api.py` |
-| System (O6) | All API endpoints and validation tested; full analysis under 3 s (mean and p95 over 100 requests); decision-flip rate with a 95% CI | Flask test client and HTTP; state-cluster bootstrap (2,000 resamples) |
+| Objective | Success criterion | Measures | Protocol |
+|-----------|-------------------|----------|----------|
+| O1 feature influence | Ranked, comparable drivers for price and rent; explanations faithful to the model | Mean \|SHAP\| per feature (global); per-prediction top-5 contributions that reconstruct the prediction exactly | TreeSHAP on 2,000 test homes / listings; reconstruction tested in `tests/test_api.py` |
+| O2 sale price | **R² ≥ 0.80** on held-out data and better than linear regression | MAE, RMSE, MAPE, R² in $; R² and RMSE on log scale; CV mean ± std | Grouped 80/20 split (unseen homes); 5-fold GroupKFold on train; RandomizedSearchCV (20 settings); model chosen by lowest mean CV RMSE (log); linear baseline always reported |
+| O3 rent | Better than linear regression with features aligned to the sale property | As O2 | As O2; ablation without coordinates |
+| O4 forecasts | Lower out-of-sample error than **persistence** | MAE and RMSE (pp of growth); directional and acceleration accuracy; 10th/90th percentile band and coverage; Diebold–Mariano test (Newey–West, lag = horizon − 1) | Expanding-window rolling origin from 2018 (HPI 30 quarterly origins × 51 states; rent 91 monthly origins); also ARIMA and the same model without macro features |
+| O5 engine | Matches manual calculations | Pass/fail to the cent | 11 hand-calculated scenarios checked three ways (hand, independent month-by-month code, Excel formulas) plus property tests |
+| O6 system | Predictive performance as O2–O4; **SUS ≥ 68**; TAM perceived usefulness and ease of use; responsive (< 3 s) and robust | Model metrics; SUS score; TAM scale means; API response time (mean, p95); API test pass rate | 100 timed requests; 37 API tests; questionnaire with 20–30 users (pending) |
+| Research gap | Forecast growth changes rent-vs-buy decisions | Share of decisions that flip, flip direction, break-even shift, with 95% CI | All 7,622 sale test homes; fixed 3% vs 10-year history vs forecast; H = 5, 7, 10; state-cluster bootstrap (2,000 resamples) |
 
 ---
 
@@ -145,17 +145,17 @@ misaligned. Source: `data/processed/panel_data_quality.json`.
 
 | Test group | Result | Source |
 |------------|--------|--------|
-| Engine manual scenarios (zero growth, 100% down payment, H > T, interest-free loan, discounting, rent compounding, published $1,438.92 payment, never breaks even, user cost, falling prices, typical case) | **11 / 11 pass**: hand values to the cent, independent monthly simulation to 1e-9, break-even year | `metrics/engine_tests.json` |
-| Engine property and validation tests (loan repaid exactly at T for 12 rate × term combinations, Δ monotone in g and r, 10 invalid inputs rejected, disclaimer present) | **28 / 28 pass** | `metrics/engine_tests.json` |
-| Excel check workbook, recalculated by Microsoft Excel | **99 / 99 values match the engine, 0 formula errors, "ALL PASS"** | `engine_test_scenarios.xlsx`, `metrics/engine_tests.json` |
-| Scenario and sensitivity tests (documented method, zero shock changes nothing, constrained model monotone in all 51 states for each of the 4 features) | 9 / 9 pass | `tests/test_scenario.py` |
-| API tests (every endpoint, 14 invalid inputs → 422, unknown ZIP with / without state, ZIP–state mismatch, out-of-training-state and rent-extrapolation warnings, SHAP reconstructs predictions, disclaimer on every response including errors, removed legacy route → 404) | 37 / 37 pass | `tests/test_api.py` |
+| **O5** – engine manual scenarios (zero growth, 100% down payment, H > T, interest-free loan, discounting, rent compounding, published $1,438.92 payment, never breaks even, user cost, falling prices, typical case) | **11 / 11 pass**: hand values to the cent, independent monthly simulation to 1e-9, break-even year | `metrics/engine_tests.json` |
+| **O5** – engine property and validation tests (loan repaid exactly at T for 12 rate × term combinations, Δ monotone in g and r, 10 invalid inputs rejected, disclaimer present) | **28 / 28 pass** | `metrics/engine_tests.json` |
+| **O5** – Excel check workbook, recalculated by Microsoft Excel | **99 / 99 values match the engine, 0 formula errors, "ALL PASS"** | `engine_test_scenarios.xlsx`, `metrics/engine_tests.json` |
+| **O5** – scenario and sensitivity tests (documented method, zero shock changes nothing, constrained model monotone in all 51 states for each of the 4 features) | 9 / 9 pass | `tests/test_scenario.py` |
+| **O6** – API tests (every endpoint, 14 invalid inputs → 422, unknown ZIP with / without state, ZIP–state mismatch, out-of-training-state and rent-extrapolation warnings, SHAP reconstructs predictions, disclaimer on every response including errors, removed legacy route → 404) | 37 / 37 pass | `tests/test_api.py` |
 | **Total** | **85 passed, 0 failed** | `logs/pipeline/tests.log` |
-| Front end (manual browser test, laptop 1,300–1,400 px and phone 375 px emulation) | No horizontal overflow on any page; sliders update the result (Austin flips rent → buy at 25 years / 7% growth); Reset restores it; error and loading states shown | Step 9 notes |
+| **O6** – front end (manual browser test, laptop 1,300–1,400 px and phone 375 px emulation) | No horizontal overflow on any page; sliders update the result (Austin flips rent → buy at 25 years / 7% growth); Reset restores it; error and loading states shown; SHAP bars stay solid after a touch tap (bug fixed) | Step 9 notes |
 
 ---
 
-## 5. Chapter 5 – System Performance
+## 5. Chapter 5 – System Performance (O6)
 
 | Measure | Result | Requirement | Source |
 |---------|--------|-------------|--------|
@@ -172,7 +172,20 @@ runs. 100% of requests finished under 3 s.
 
 ## 6. Chapter 5 – Technical Measures
 
-### 6.1 Sale price model (O1) – `metrics/sale_models.json`
+### 6.1 O1 – Features that most influence sale price and rent (SHAP) – `metrics/*_models.json`, `figures/*_shap_summary.png`
+Mean |SHAP| on log scale, from 2,000 test homes:
+
+| Model | 1st | 2nd | 3rd | 4th | 5th | 6th |
+|-------|-----|-----|-----|-----|-----|-----|
+| Price | living area 0.260 | state 0.257 | ZIP income 0.223 | ZIP density 0.155 | baths 0.075 | beds 0.024 |
+| Rent | longitude 0.126 | state 0.117 | floor area 0.112 | latitude 0.111 | baths 0.055 | beds 0.018 |
+
+- **Location matters as much as size for price, and more than size for rent.** Floor area is the strongest single driver of price (0.260, just ahead of state 0.257), and ZIP income adds 0.223. For rent, the location variables lead (longitude 0.126, state 0.117, latitude 0.111; together about 3× floor area at 0.112).
+- **Bedrooms add little once floor area is known** (0.024 price, 0.018 rent); bathrooms carry about 3× more.
+- **Per-prediction explanations are exact.** Each request returns its top-5 contributions,
+  which reconstruct the prediction exactly (tested).
+
+### 6.2 O2 – Sale price model – `metrics/sale_models.json`
 Train 30,436 / test 7,622 homes, 29 states. Features: state, beds, baths, living area, ZIP
 density, ZIP income.
 
@@ -183,15 +196,14 @@ density, ZIP income.
 | XGBoost | 0.298 ± 0.007 | 0.850 ± 0.004 | 0.856 | 0.820 | 22.0% | $121,891 | $246,876 |
 | **CatBoost (selected)** | **0.297 ± 0.006** | **0.851 ± 0.003** | **0.857** | **0.829** | **22.0%** | **$120,036** | **$240,674** |
 
-- **Beats the baseline:** R² (log) +0.095 and MAPE −8.2 pp. Meets the plan's target of
-  R² ≥ 0.80.
+- **O2 met:** held-out R² (log) **0.857 ≥ 0.80** (0.829 in dollars), and it beats the linear baseline by +0.095 R² (log) and −8.2 pp MAPE. The held-out set is 7,622 homes the model never saw, with repeated homes kept on one side of the split.
 - **CatBoost and XGBoost are statistically tied.** The CV RMSE gap (0.0008) is much smaller
   than one standard deviation (≈ 0.006).
 - **Error varies by state.** Test MAPE is lowest in NC (16.5%), WA (17.0%) and NE (17.2%), and
   highest in WI (30.3%), LA (33.9%) and MI (41.3%). Cheaper homes have larger percentage
   errors.
 
-### 6.2 Rent model (O2) – `metrics/rent_models.json`
+### 6.3 O3 – Rent model – `metrics/rent_models.json`
 Train 78,935 / test 19,892 listings, 51 states. Features: state, beds, baths, floor area,
 latitude, longitude.
 
@@ -203,7 +215,8 @@ latitude, longitude.
 | **CatBoost (selected)** | **0.187 ± 0.002** | **0.816 ± 0.004** | **0.824** | **0.792** | **13.6%** | **$209** | **$364** |
 | CatBoost without coordinates (ablation; fallback model) | – | – | 0.611 | 0.538 | 20.9% | $324 | $542 |
 
-- **Beats the baseline:** R² (log) +0.255 and MAPE −8.6 pp.
+- **O3 met:** it beats the linear baseline by +0.255 R² (log) and −8.6 pp MAPE.
+- **Aligned features.** Inputs match what the user enters for the sale property (state, beds, baths, floor area), plus location as coordinates from the ZIP lookup. Location enters the two models differently because D2 has no ZIP income or density and D1 has no coordinates. The no-coordinates variant uses exactly the shared set and still beats the linear baseline (R² log 0.611 vs 0.569).
 - **Location is essential.** Removing coordinates costs 0.21 of R². This is why the API
   includes a ZIP → coordinates lookup.
 - **Model predicts 2019 rents.** Its output is multiplied by the CPI factor 1.327 to reach
@@ -211,7 +224,7 @@ latitude, longitude.
 - **Small-state errors are unreliable.** The worst states have 2–25 test listings each
   (WV 38.5%, RI 28.6%, WY 27.9%).
 
-### 6.3 Forecasts (O3, RQ4) – `metrics/forecast.json`, `models/forecasts.json`
+### 6.4 O4 – Macroeconomic forecasts vs persistence (RQ4) – `metrics/forecast.json`, `models/forecasts.json`
 
 **House price growth**: 4-quarter-ahead growth (percentage points), 51 states × 30 origins
 (2018 Q1 – 2025 Q2), 1,530 forecasts.
@@ -250,6 +263,24 @@ Diebold–Mariano tests (gradient boosting + macro vs each method):
 | vs persistence | 0.442 | No |
 | vs ARIMA | 0.107 | No (ARIMA better) |
 
+Diebold–Mariano tests for the **selected rent method (ARIMA)** (`dm_tests_vs_recommended`):
+
+| Comparison | p | Significant? |
+|------------|---|--------------|
+| vs persistence | **0.007** | **Yes** |
+| vs gradient boosting, no macro | **0.045** | Yes |
+| vs gradient boosting + macro | 0.107 | No |
+
+**O4 – beating persistence out-of-sample:**
+
+| Target | Method used | RMSE vs persistence | MAE vs persistence | Significant (DM)? |
+|--------|-------------|---------------------|--------------------|-------------------|
+| House price appreciation (51 states) | Gradient boosting + macro, monotonic | **5.38 vs 6.59** (−18%) | 3.58 vs 4.35 | No (p = 0.281) |
+| Rent growth (US) | ARIMA | **1.62 vs 2.24** (−28%) | 1.12 vs 1.74 | **Yes (p = 0.007)** |
+| Rent growth (US), macro model | Gradient boosting + macro | 2.02 vs 2.24 (−10%) | 1.35 vs 1.74 | No (p = 0.442) |
+
+**O4 is largely met.** Both forecasts beat persistence on every error measure, out-of-sample. For rent the improvement is statistically significant. For house prices it is not, because 30 overlapping yearly forecasts give the test little power. The rent forecast actually used is ARIMA, a time-series model; the rent model *with* macro indicators also beats persistence, but not significantly. State this honestly against the "macroeconomic forecast" wording.
+
 **Answer to RQ4 (do macro indicators improve the forecast?)**
 - **House prices: yes, partly.** Macro features significantly improve the same model
   (p = 0.043), and the macro model has the lowest error of all methods. Its advantage over
@@ -273,19 +304,9 @@ Diebold–Mariano tests (gradient boosting + macro vs each method):
   the first 3 quarters; rents rose 2.46% over the first 11 months. Both forecasts look
   somewhat high so far.
 
-### 6.4 Explanations (O5) – `metrics/*_models.json`, `figures/*_shap_summary.png`
-Mean |SHAP| on log scale, from 2,000 test homes:
+### 6.5 O5 – Rent-vs-buy engine, sensitivity and scenarios
+**O5 met.** Verification against manual calculations is in §4: 11 / 11 hand-calculated scenarios pass to the cent, an independent month-by-month calculation agrees to 1e-9, and Excel recalculates 99 / 99 values identically.
 
-| Model | 1st | 2nd | 3rd | 4th | 5th | 6th |
-|-------|-----|-----|-----|-----|-----|-----|
-| Price | living area 0.260 | state 0.257 | ZIP income 0.223 | ZIP density 0.155 | baths 0.075 | beds 0.024 |
-| Rent | longitude 0.126 | state 0.117 | floor area 0.112 | latitude 0.111 | baths 0.055 | beds 0.018 |
-
-- **Location matters as much as size for price, and more than size for rent.**
-- **Per-prediction explanations are exact.** Each request returns its top-5 contributions,
-  which reconstruct the prediction exactly (tested).
-
-### 6.5 Rent-vs-buy engine, sensitivity and scenarios (O4)
 Worked example (illustrative, not a valuation):
 - **Property:** 3-bed, 2-bath, 1,800 sq ft house in Austin, TX.
 - **Inputs:** predicted price **$374,575** and rent **$2,600**/month; g 3.09%, q 3.57%,
@@ -320,7 +341,9 @@ Scenarios (`metrics/scenario_example.json`):
 
 The decision depends on the growth forecast more than on any cost assumption.
 
-### 6.6 Decision-flip experiment (O6, the research gap) – `metrics/decision_flip.json`
+### 6.6 Research gap – decision-flip experiment – `metrics/decision_flip.json`
+
+**The gap:** rent-vs-buy calculators use a fixed growth assumption (typically 3%). This experiment tests whether replacing it with a data-driven forecast changes the recommendation for real properties. If decisions flip, forecast growth matters for the decision, which justifies combining forecasting with the NPV engine.
 **Setup:**
 - **Properties:** all 7,622 sale test homes (29 states).
 - **Inputs:** predicted price; rent from the no-coordinates rent model × 1.327; CLAUDE.md
@@ -346,6 +369,8 @@ The decision depends on the growth forecast more than on any cost assumption.
 close to 3%) to 30% (NM). The largest (b)↔(c) flip rate is WA at 88% (history 8.1% against a
 4.0% forecast).
 
+**Conclusion for the gap:** forecast-based growth changes **about 1 in 10** recommendations compared with a fixed 3% (CI 7–14% at H = 7), and **about 1 in 4** compared with naive extrapolation of the last decade. Break-even moves by 2–3 years on average. So the growth assumption that existing tools fix or extrapolate is decision-relevant. (Whether the forecast-based decisions are *better* rests on the forecast accuracy evidence in §6.4.)
+
 **Robustness:** with actual listing prices instead of predicted ones, the H = 7 flip rates are
 10.2% and 24.2% (main run: 10.3% and 23.8%).
 
@@ -357,8 +382,8 @@ close to 3%) to 30% (NM). The largest (b)↔(c) flip rate is WA at 88% (history 
 |---------------|--------|----------|
 | Typical online rent-vs-buy calculators (fixed 3% growth) | Forecast-based growth changes **≈10% of decisions** (95% CI 7–14% at H = 7) and moves break-even by about 2 years | §6.6 |
 | "Extrapolate the last 10 years" | Recommends buying for 94–98% of homes because of the pandemic boom; the forecast reverses about 1 in 4 of those (all buy → rent) | §6.6 |
-| Simple forecasting baselines (persistence, ARIMA, model without macro) | The macro model has the lowest HPI error (RMSE 5.38 vs 6.03–7.09); significant only against no-macro | §6.3 |
-| Linear regression price/rent models | Gradient boosting reduces MAPE by 8.2 pp (sale) and 8.6 pp (rent) | §6.1–6.2 |
+| Simple forecasting baselines (persistence, ARIMA, model without macro) | Both forecasts beat persistence (HPI RMSE 5.38 vs 6.59; rent 1.62 vs 2.24, significant p = 0.007); the macro HPI model has the lowest error of all methods | §6.4 |
+| Linear regression price/rent models | Gradient boosting reduces MAPE by 8.2 pp (sale) and 8.6 pp (rent) | §6.2–6.3 |
 | The original prototype (PPSq model) | Its apparent R² ≈ 0.99 came from target leakage; the honest, leakage-free model reaches 0.857 and adds rent, forecasts, the NPV engine, explanations, uncertainty ranges and a disclaimer | §2.2.1 |
 
 Comparisons with commercial products (for example automated valuation models) need
@@ -370,12 +395,13 @@ published figures from the literature, with citations. None are quoted here.
 
 | Objective | Status | Key evidence |
 |-----------|--------|--------------|
-| **O1** sale price | **Met** | CatBoost test R² (log) 0.857, MAPE 22.0%, beats the linear baseline by 0.095 R²; leakage removed; reproduced exactly (§6.1) |
-| **O2** rent | **Met** | CatBoost test R² (log) 0.824, MAPE 13.6%, beats the baseline by 0.255 R²; grouped split prevents relisting leakage (§6.2) |
-| **O3** forecasts + RQ4 | **Met, with a nuanced answer** | Macro features significantly improve the model (p = 0.043) and give the lowest HPI error, but not significantly better than persistence / ARIMA; ARIMA best for rent; 80% bands provided (§6.3) |
-| **O4** NPV engine, sensitivity, scenarios | **Met** | 11/11 hand scenarios, 28/28 property tests, Excel 99/99; tornado and 7 scenarios; monotonic constraints make shocks economically coherent (§4, §6.5) |
-| **O5** explanations | **Met** | TreeSHAP global summaries and per-prediction top-5 that reconstruct each prediction exactly (§6.4) |
-| **O6** integrated system + research gap | **Met (system); user evaluation pending** | 5 API endpoints, 37 API tests, 136 ms mean / 147 ms p95 (< 3 s), responsive front end with the disclaimer on every result; forecast growth flips ≈10% of decisions vs a fixed 3% (§5, §6.6). SUS + TAM evaluation with 20–30 users still to do |
+| **O1** features that influence price and rent (SHAP) | **Met** | Price: floor area 0.260 ≈ state 0.257 > ZIP income 0.223 > density 0.155 > baths 0.075 > beds 0.024. Rent: longitude 0.126, state 0.117, floor area 0.112, latitude 0.111 > baths 0.055 > beds 0.018. Location dominates rent; size and location share price; per-prediction top-5 reconstructs each estimate exactly (§6.1) |
+| **O2** sale model, R² ≥ 0.80, beats linear | **Met** | Held-out R² (log) **0.857** (R² $ 0.829), MAPE 22.0%; linear 0.762 / 30.2%; leakage removed; reproduced exactly (§6.2) |
+| **O3** rent model, aligned features, beats linear | **Met** | R² (log) **0.824**, MAPE 13.6% vs linear 0.569 / 22.2%; aligned inputs (state, beds, baths, floor area + ZIP location); grouped split (§6.3) |
+| **O4** forecasts beat persistence out-of-sample | **Largely met** | HPI: RMSE 5.38 vs 6.59, MAE 3.58 vs 4.35 (not significant, p = 0.281). Rent: ARIMA RMSE 1.62 vs 2.24 (**significant, p = 0.007**); rent macro model 2.02 vs 2.24 (p = 0.442). Macro features significantly improve the HPI model (p = 0.043) (§6.4) |
+| **O5** NPV engine verified against manual calculations | **Met** | 11 / 11 hand scenarios to the cent, 28 / 28 property tests, Excel 99 / 99; break-even, tornado sensitivity and 7 scenarios (§4, §6.5) |
+| **O6** integrated system: predictive performance, SUS ≥ 68, TAM | **Partly met – usability study pending** | Predictive performance: O2–O4 above. System: 5 API endpoints, 37 API tests, 136 ms mean / 147 ms p95 (< 3 s), responsive front end with the disclaimer on every result (§4, §5). **SUS and TAM not yet collected** (20–30 users); the SUS ≥ 68 target cannot be assessed until then |
+| **Research gap** | **Supported** | Forecast growth flips **10.3%** of decisions vs a fixed 3% (95% CI 7.3–13.8%, H = 7) and **23.8%** vs 10-year extrapolation; break-even shifts −2.0 / +2.8 years (§6.6) |
 
 ---
 
@@ -396,8 +422,8 @@ published figures from the literature, with citations. None are quoted here.
    a time. Only four HPI features are constrained.
 5. **Decision-flip shows sensitivity, not correctness.** It shows the decision depends on the
    growth input; it doesn't prove the forecast-based decisions are better. The forecast's
-   accuracy evidence is the backtest (§6.3).
-6. **No user evaluation yet** (SUS/TAM pending).
+   accuracy evidence is the backtest (§6.4).
+6. **No user evaluation yet.** SUS (target ≥ 68) and TAM are pending, so O6 is only partly evidenced.
 
 ---
 
@@ -408,13 +434,13 @@ published figures from the literature, with citations. None are quoted here.
 | `sale_distributions.png`, `rent_distributions.png` | Distributions of every model variable | Ch. 4 data |
 | `sale_correlation.png`, `rent_correlation.png` | Spearman correlations | Ch. 4 data |
 | `sale_price_by_state.png`, `rent_price_by_state.png` | Price / rent by state | Ch. 4 data |
-| `sale_pred_vs_actual.png`, `rent_pred_vs_actual.png` | Predicted vs actual, test set | 6.1, 6.2 |
-| `sale_shap_summary.png`, `rent_shap_summary.png` | SHAP beeswarm | 6.4 |
-| `forecast_backtest_hpi.png`, `forecast_backtest_rent.png` | Rolling-origin backtest, every method | 6.3 |
-| `forecast_error_by_state.png` | HPI forecast MAE by state, model vs persistence | 6.3 |
-| `cost_over_time_example.png` | Buy vs rent PV cost over 30 years, break-even | 6.5 |
-| `tornado_sensitivity.png` | One-at-a-time sensitivity | 6.5 |
-| `decision_flip.png` | Flip rate by H (with CIs) and by state | 6.6 |
+| `sale_pred_vs_actual.png`, `rent_pred_vs_actual.png` | Predicted vs actual, test set | 6.2 (O2), 6.3 (O3) |
+| `sale_shap_summary.png`, `rent_shap_summary.png` | SHAP beeswarm | 6.1 (O1) |
+| `forecast_backtest_hpi.png`, `forecast_backtest_rent.png` | Rolling-origin backtest, every method | 6.4 (O4) |
+| `forecast_error_by_state.png` | HPI forecast MAE by state, model vs persistence | 6.4 (O4) |
+| `cost_over_time_example.png` | Buy vs rent PV cost over 30 years, break-even | 6.5 (O5) |
+| `tornado_sensitivity.png` | One-at-a-time sensitivity | 6.5 (O5) |
+| `decision_flip.png` | Flip rate by H (with CIs) and by state | 6.6 (research gap) |
 
 ## 11. Metrics and model files
 

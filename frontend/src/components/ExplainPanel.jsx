@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { money, signedPct, featureValue } from "../lib/format";
 
 const RAISE = "#2a78d6"; // blue: raises the estimate
@@ -6,7 +6,6 @@ const LOWER = "#e34948"; // red: lowers the estimate
 
 /** Horizontal diverging bars of SHAP effects (top 5) for one model. */
 function ShapChart({ title, exp, unit }) {
-    const [hover, setHover] = useState(null);
     const maxAbs = Math.max(...exp.top.map((t) => Math.abs(t.shap_log)), 1e-9);
 
     return (
@@ -16,28 +15,28 @@ function ShapChart({ title, exp, unit }) {
                 Starts from the average estimate of {money(exp.baseline)}{unit}; each feature moves it up or down.
             </p>
             <ul className="space-y-2.5">
-                {exp.top.map((t, i) => {
+                {exp.top.map((t) => {
                     const w = (Math.abs(t.shap_log) / maxAbs) * 50; // % of the row; 50% = one side
                     const up = t.shap_log >= 0;
                     return (
-                        <li key={t.feature} className="text-sm"
-                            onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
-                            onFocus={() => setHover(i)} onBlur={() => setHover(null)} tabIndex={0}
+                        // Bars always keep full colour; hover / keyboard focus only tints the row
+                        // (dimming the other bars stuck on touch screens, where no mouse-leave fires).
+                        <li key={t.feature} tabIndex={0}
+                            className="text-sm rounded-md -mx-1.5 px-1.5 py-0.5 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:ring-2 focus-visible:ring-indigo-300"
                             aria-label={`${t.label} ${featureValue(t)}: ${signedPct(t.effect_pct)}`}>
                             <div className="flex justify-between gap-2 text-gray-700">
                                 <span className="truncate">{t.label} <span className="text-gray-500">({featureValue(t)})</span></span>
                                 <span className="font-semibold tabular-nums text-gray-900">{signedPct(t.effect_pct)}</span>
                             </div>
-                            <div className="relative h-5 mt-1 rounded bg-gray-50">
+                            <div className="relative h-5 mt-1 rounded bg-gray-100/60">
                                 <div className="absolute inset-y-0 left-1/2 w-px bg-gray-300" aria-hidden="true" />
                                 <div
-                                    className="absolute inset-y-0.5 transition-opacity"
+                                    className="absolute inset-y-0.5"
                                     style={{
                                         background: up ? RAISE : LOWER,
                                         width: `${w}%`,
                                         left: up ? "50%" : `${50 - w}%`,
                                         borderRadius: up ? "0 4px 4px 0" : "4px 0 0 4px",
-                                        opacity: hover === null || hover === i ? 1 : 0.45,
                                     }}
                                     aria-hidden="true"
                                 />
