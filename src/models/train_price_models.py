@@ -3,17 +3,23 @@
 Protocol (CLAUDE.md / Chapter 4):
 - target log(price); 80/20 train/test split (random_state=42);
 - candidates: LinearRegression (baseline), RandomForest, XGBoost, CatBoost;
-- 5-fold CV on the training set; RandomizedSearchCV (n_iter=30) for the three tree models;
+- 5-fold CV on the training set; RandomizedSearchCV (n_iter=20) for the three tree models;
 - select the candidate with the lowest mean CV RMSE (log scale, the scale the models fit);
 - report MAE, RMSE, MAPE, R² in dollars and R² on the log scale on the test set,
   plus CV mean ± std for every metric.
 
 Encoders sit inside each sklearn Pipeline, so they are fitted on training folds only.
-If a dataset defines "group_cols", the split and the CV folds are grouped on them, so
-repeated copies of the same listing never sit on both sides of a split.
+The 80/20 split and the CV folds are grouped (GroupShuffleSplit / GroupKFold) on
+"group_cols", so the same property re-listed, or an identical floor plan at the same
+location, never sits on both sides of a split.
 If it defines "ablation", the selected model (same hyper-parameters) is also trained
 without those columns and reported, and saved as {name}_model_{ablation}.joblib.
 Predictions are returned to dollars with exp(); this estimates the conditional median.
+
+Checkpointing: after every candidate the fitted pipeline is saved to
+artefacts/models/candidates/ and the results so far to {name}_models.json
+("status": "partial"). A rerun with the same settings resumes from there; use --fresh
+to retrain everything.
 
 Outputs:
   artefacts/models/{name}_model.joblib    best fitted pipeline (refit on the full training set)
@@ -21,13 +27,15 @@ Outputs:
   artefacts/metrics/{name}_models.json    every candidate x every metric
   artefacts/figures/{name}_pred_vs_actual.png, {name}_shap_summary.png
 
-Run:  python -m src.models.train_price_models --dataset sale   (or --dataset rent)
+Run:  python -m src.models.train_price_models --dataset sale --log artefacts/logs/train_sale.log
 """
 import argparse
+import hashlib
 import json
 import platform
 import sys
 import time
+from pathlib import Path
 
 import catboost
 import joblib
@@ -56,7 +64,7 @@ from xgboost import XGBRegressor
 
 from src.config import FIGURES_DIR, METRICS_DIR, MODELS_DIR, PROCESSED_DIR, RANDOM_STATE, ensure_dirs
 
-N_ITER = 30
+N_ITER = 20
 CV_FOLDS = 5
 
 DATASETS = {
@@ -68,6 +76,10 @@ DATASETS = {
         # Right-skewed inputs are logged for the linear baseline only (trees are invariant).
         "log_for_linear": ["living_space", "zip_code_density", "median_household_income"],
         "label": "sale price",
+        # D1 has no coordinates; density + income identify the ZIP. Same ZIP + same size,
+        # beds and baths = the same property re-listed or an identical floor plan.
+        "group_cols": ["zip_code_density", "median_household_income", "living_space",
+                       "beds", "baths"],
     },
     "rent": {
         "file": "rent_clean.csv",
@@ -78,8 +90,8 @@ DATASETS = {
         "numeric": ["bedrooms", "bathrooms", "square_feet", "latitude", "longitude"],
         "log_for_linear": ["square_feet"],
         "label": "monthly rent",
-        # 14.5k rows are the same unit re-listed under another id.
-        "group_cols": ["latitude", "longitude", "rent", "square_feet", "bedrooms", "bathrooms"],
+        # Same location + same floor area = the same flat (re-listed) or the same floor plan.
+        "group_cols": ["latitude", "longitude", "square_feet"],
         "ablation": {"name": "no_coords", "drop": ["latitude", "longitude"]},
     },
 }
@@ -152,14 +164,19 @@ def build_candidates(spec: dict) -> dict:
     cat_prep = ColumnTransformer([("all", "passthrough", cat + num)],
                                  verbose_feature_names_out=False).set_output(transform="pandas")
 
+    # Parallelism: only one level may be parallel, never both the search and the model
+    # (nested parallelism multiplies workers x threads and can exhaust memory).
+    # "search_jobs" is the n_jobs of RandomizedSearchCV / cross_validate for that model.
     return {
         "linear_regression": {
             "pipeline": Pipeline([("prep", linear_prep), ("model", LinearRegression())]),
             "space": None,
+            "search_jobs": -1,
         },
         "random_forest": {
             "pipeline": Pipeline([("prep", tree_prep), ("model", RandomForestRegressor(
                 random_state=RANDOM_STATE, n_jobs=1))]),
+            "search_jobs": 4,  # each RF fit holds hundreds of deep trees in memory
             "space": {
                 "model__n_estimators": randint(200, 600),
                 "model__max_depth": [None, 10, 15, 20, 30],
@@ -170,6 +187,7 @@ def build_candidates(spec: dict) -> dict:
         "xgboost": {
             "pipeline": Pipeline([("prep", tree_prep), ("model", XGBRegressor(
                 random_state=RANDOM_STATE, n_jobs=1, tree_method="hist"))]),
+            "search_jobs": -1,
             "space": {
                 "model__n_estimators": randint(300, 1500),
                 "model__learning_rate": loguniform(0.01, 0.2),
@@ -182,8 +200,9 @@ def build_candidates(spec: dict) -> dict:
         },
         "catboost": {
             "pipeline": Pipeline([("prep", cat_prep), ("model", CatBoostRegressor(
-                cat_features=tuple(cat), random_seed=RANDOM_STATE, thread_count=1,
+                cat_features=tuple(cat), random_seed=RANDOM_STATE, thread_count=-1,
                 verbose=0, allow_writing_files=False))]),
+            "search_jobs": 1,  # CatBoost parallelises internally over all cores
             "space": {
                 "model__iterations": randint(300, 1500),
                 "model__learning_rate": loguniform(0.02, 0.2),
@@ -284,40 +303,111 @@ def shap_summary(pipeline, X_test, name, model_name, label) -> dict:
     return {X_t.columns[i]: float(mean_abs[i]) for i in order}
 
 
+# ----------------------------------------------------------------------------- checkpoints
+CANDIDATES_DIR = MODELS_DIR / "candidates"
+
+
+def run_fingerprint(spec: dict, n_rows: int) -> str:
+    """Identifies the settings a checkpoint was made with, so a stale one is never reused."""
+    key = json.dumps({"spec": spec, "n_rows": n_rows, "n_iter": N_ITER, "folds": CV_FOLDS,
+                      "seed": RANDOM_STATE}, sort_keys=True)
+    return hashlib.sha256(key.encode()).hexdigest()[:12]
+
+
+def save_checkpoint(name, fingerprint, cand, model, results, protocol, features, n, n_train, n_test):
+    CANDIDATES_DIR.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, CANDIDATES_DIR / f"{name}_{cand}.joblib", compress=3)
+    partial = {"dataset": name, "status": "partial", "run_fingerprint": fingerprint,
+               "rows": {"total": n, "train": n_train, "test": n_test}, "features": features,
+               "protocol": protocol, "candidates": results}
+    with open(METRICS_DIR / f"{name}_models.json", "w") as f:
+        json.dump(partial, f, indent=2)
+
+
+def load_checkpoint(name, fingerprint, X_test, fresh) -> tuple[dict, dict]:
+    path = METRICS_DIR / f"{name}_models.json"
+    if fresh or not path.exists():
+        return {}, {}
+    with open(path) as f:
+        saved = json.load(f)
+    if saved.get("run_fingerprint") != fingerprint:
+        print(f"[{name}] existing {path.name} was made with other settings - starting fresh", flush=True)
+        return {}, {}
+    results, fitted = {}, {}
+    for cand, res in saved["candidates"].items():
+        model_path = CANDIDATES_DIR / f"{name}_{cand}.joblib"
+        if model_path.exists():
+            model = joblib.load(model_path)
+            results[cand] = res
+            fitted[cand] = (model, model.predict(X_test))
+    return results, fitted
+
+
+class Tee:
+    """Write console output to a log file as well (also captures tracebacks)."""
+
+    def __init__(self, stream, log_file):
+        self.stream, self.log_file = stream, log_file
+
+    def write(self, text):
+        self.stream.write(text)
+        self.log_file.write(text)
+        self.log_file.flush()
+
+    def flush(self):
+        self.stream.flush()
+        self.log_file.flush()
+
+    def __getattr__(self, attr):  # encoding, isatty(), fileno() ... come from the console
+        return getattr(self.stream, attr)
+
+
 # ----------------------------------------------------------------------------- main
-def run(name: str):
+def run(name: str, fresh: bool = False):
     ensure_dirs()
     spec = DATASETS[name]
     features = spec["categorical"] + spec["numeric"]
     df = pd.read_csv(PROCESSED_DIR / spec["file"])
     X = df[features]
     y = np.log(df[spec["target"]])
-    if spec.get("group_cols"):
-        groups = df.groupby(spec["group_cols"]).ngroup()
-        tr, te = next(GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=RANDOM_STATE)
-                      .split(X, y, groups))
-        X_train, X_test, y_train, y_test = X.iloc[tr], X.iloc[te], y.iloc[tr], y.iloc[te]
-        g_train = groups.iloc[tr]
-        cv = GroupKFold(n_splits=CV_FOLDS, shuffle=True, random_state=RANDOM_STATE)
-    else:
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=RANDOM_STATE)
-        g_train = None
-        cv = KFold(n_splits=CV_FOLDS, shuffle=True, random_state=RANDOM_STATE)
+    groups = df.groupby(spec["group_cols"]).ngroup()
+    tr, te = next(GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=RANDOM_STATE)
+                  .split(X, y, groups))
+    X_train, X_test, y_train, y_test = X.iloc[tr], X.iloc[te], y.iloc[tr], y.iloc[te]
+    g_train = groups.iloc[tr]
+    cv = GroupKFold(n_splits=CV_FOLDS, shuffle=True, random_state=RANDOM_STATE)
 
-    results, fitted = {}, {}
+    protocol = {
+        "split": f"80/20 GroupShuffleSplit on {', '.join(spec['group_cols'])}, random_state=42",
+        "cv": f"{CV_FOLDS}-fold GroupKFold (shuffle, random_state=42) on the training set, same groups",
+        "tuning": f"RandomizedSearchCV n_iter={N_ITER}, refit on lowest mean CV RMSE (log)",
+        "parallelism": "search n_jobs: linear -1, random_forest 4, xgboost -1 (model n_jobs=1), "
+                       "catboost 1 (model thread_count=-1)",
+        "selection": "lowest mean CV RMSE on log scale",
+        "back_transform": "exp(prediction) - estimates the conditional median",
+        "n_groups": int(groups.nunique()),
+        "rows_in_repeated_groups": int(groups.duplicated(keep=False).sum()),
+    }
+    fingerprint = run_fingerprint(spec, len(df))
+    results, fitted = load_checkpoint(name, fingerprint, X_test, fresh)
+
     for cand, c in build_candidates(spec).items():
+        if cand in results:
+            print(f"[{name}] {cand}: loaded from checkpoint "
+                  f"(CV RMSE(log) {results[cand]['cv']['rmse_log']['mean']:.4f})", flush=True)
+            continue
         t0 = time.time()
-        print(f"[{name}] {cand} ...", flush=True)
+        print(f"[{name}] {cand} ... started {time.strftime('%H:%M:%S')}", flush=True)
         if c["space"] is None:
             cvr = cross_validate(c["pipeline"], X_train, y_train, groups=g_train, cv=cv,
-                                 scoring=SCORING, n_jobs=-1)
+                                 scoring=SCORING, n_jobs=c["search_jobs"])
             model = c["pipeline"].fit(X_train, y_train)
             cv_stats, best_params = cv_summary(cvr), {}
         else:
             search = RandomizedSearchCV(
                 c["pipeline"], c["space"], n_iter=N_ITER, cv=cv, scoring=SCORING,
-                refit="rmse_log", n_jobs=-1, random_state=RANDOM_STATE, error_score="raise")
+                refit="rmse_log", n_jobs=c["search_jobs"], random_state=RANDOM_STATE,
+                error_score="raise")
             search.fit(X_train, y_train, groups=g_train)
             model = search.best_estimator_
             cv_stats = cv_summary(search.cv_results_, search.best_index_)
@@ -331,6 +421,8 @@ def run(name: str):
             "fit_seconds": round(time.time() - t0, 1),
         }
         fitted[cand] = (model, pred)
+        save_checkpoint(name, fingerprint, cand, model, results, protocol, features, len(df),
+                        len(X_train), len(X_test))
         print(f"    CV RMSE(log) {cv_stats['rmse_log']['mean']:.4f} ± {cv_stats['rmse_log']['std']:.4f}"
               f" | test R²(log) {results[cand]['test']['r2_log']:.4f}"
               f" | {results[cand]['fit_seconds']}s", flush=True)
@@ -345,10 +437,11 @@ def run(name: str):
         ab_spec = {**spec, "numeric": [c for c in spec["numeric"] if c not in ab["drop"]],
                    "log_for_linear": [c for c in spec["log_for_linear"] if c not in ab["drop"]]}
         ab_features = ab_spec["categorical"] + ab_spec["numeric"]
-        ab_pipe = build_candidates(ab_spec)[best]["pipeline"].set_params(**tuned)
+        ab_cand = build_candidates(ab_spec)[best]
+        ab_pipe = ab_cand["pipeline"].set_params(**tuned)
         print(f"[{name}] ablation {ab['name']} ({best}, same hyper-parameters) ...", flush=True)
         ab_cv = cross_validate(clone(ab_pipe), X_train[ab_features], y_train, groups=g_train,
-                               cv=cv, scoring=SCORING, n_jobs=-1)
+                               cv=cv, scoring=SCORING, n_jobs=ab_cand["search_jobs"])
         ab_model = ab_pipe.fit(X_train[ab_features], y_train)
         ablation = {
             "name": ab["name"], "dropped": ab["drop"], "model": best, "features": ab_features,
@@ -358,14 +451,13 @@ def run(name: str):
         joblib.dump(ab_model, MODELS_DIR / f"{name}_model_{ab['name']}.joblib")
 
     # How much would an ungrouped random split have flattered the selected model?
-    random_split_check = None
-    if spec.get("group_cols"):
-        Xr_tr, Xr_te, yr_tr, yr_te = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
-        rs_model = build_candidates(spec)[best]["pipeline"].set_params(**tuned).fit(Xr_tr, yr_tr)
-        random_split_check = {
-            "note": "Selected model and hyper-parameters on an ungrouped 80/20 split, for comparison only.",
-            "test": test_metrics(yr_te, rs_model.predict(Xr_te)),
-        }
+    print(f"[{name}] ungrouped random-split comparison ({best}) ...", flush=True)
+    Xr_tr, Xr_te, yr_tr, yr_te = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
+    rs_model = build_candidates(spec)[best]["pipeline"].set_params(**tuned).fit(Xr_tr, yr_tr)
+    random_split_check = {
+        "note": "Selected model and hyper-parameters on an ungrouped 80/20 split, for comparison only.",
+        "test": test_metrics(yr_te, rs_model.predict(Xr_te)),
+    }
 
     # Test error by state for the selected model (used for the "error by state" discussion).
     test_df = X_test.assign(actual=np.exp(y_test), predicted=np.exp(best_pred))
@@ -385,15 +477,9 @@ def run(name: str):
         "rows": {"total": len(df), "train": len(X_train), "test": len(X_test)},
         "features": features,
         "target": f"log({spec['target']})",
-        "protocol": {
-            "split": ("80/20 GroupShuffleSplit on " + ", ".join(spec["group_cols"])
-                      if spec.get("group_cols") else "80/20 random") + ", random_state=42",
-            "cv": f"{CV_FOLDS}-fold {'GroupKFold' if spec.get('group_cols') else 'KFold'} "
-                  "(shuffle, random_state=42) on the training set",
-            "tuning": f"RandomizedSearchCV n_iter={N_ITER}, refit on lowest mean CV RMSE (log)",
-            "selection": "lowest mean CV RMSE on log scale",
-            "back_transform": "exp(prediction) - estimates the conditional median price",
-        },
+        "status": "complete",
+        "run_fingerprint": fingerprint,
+        "protocol": protocol,
         "selected_model": best,
         "candidates": results,
         "improvement_over_baseline_test": {
@@ -450,6 +536,18 @@ def print_report(o: dict):
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", choices=list(DATASETS), default="sale")
-    run(ap.parse_args().dataset)
+    ap.add_argument("--log", type=Path, help="also write all console output to this file")
+    ap.add_argument("--fresh", action="store_true", help="ignore checkpoints and retrain everything")
+    args = ap.parse_args()
+    if args.log:
+        args.log.parent.mkdir(parents=True, exist_ok=True)
+        log_file = open(args.log, "a", encoding="utf-8")
+        log_file.write(f"\n===== {time.strftime('%Y-%m-%d %H:%M:%S')}  dataset={args.dataset}"
+                       f"  fresh={args.fresh} =====\n")
+        sys.stdout, sys.stderr = Tee(sys.stdout, log_file), Tee(sys.stderr, log_file)
+    t_start = time.time()
+    run(args.dataset, fresh=args.fresh)
+    print(f"\nFinished in {(time.time() - t_start) / 60:.1f} min")

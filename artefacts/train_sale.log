@@ -1,0 +1,388 @@
+[sale] linear_regression ...
+    CV RMSE(log) 0.3734 ± 0.0034 | test R²(log) 0.7674 | 2.0s
+[sale] random_forest ...
+    CV RMSE(log) 0.3108 ± 0.0047 | test R²(log) 0.8453 | 463.5s
+[sale] xgboost ...
+    CV RMSE(log) 0.2954 ± 0.0048 | test R²(log) 0.8599 | 169.7s
+[sale] catboost ...
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '22060']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '6808']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '25300']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '11272']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '1620']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '20508']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '23524']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '17960']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '7932']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '22816']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '10524']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py:63: UserWarning: Failed to kill subprocesses on this platform. Please installpsutil: https://github.com/giampaolo/psutil
+Details:
+Traceback (most recent call last):
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 58, in _kill_process_tree_without_psutil
+    _windows_taskkill_process_tree(process.pid)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\externals\loky\backend\utils.py", line 81, in _windows_taskkill_process_tree
+    subprocess.check_output(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["taskkill", "/F", "/T", "/PID", str(pid)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        stderr=None,
+        ^^^^^^^^^^^^
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "C:\Users\hiran\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['taskkill', '/F', '/T', '/PID', '27860']' returned non-zero exit status 3221225794.
+
+  warnings.warn(
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\forcasting model\src\models\train_price_models.py", line 455, in <module>
+    run(ap.parse_args().dataset)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\forcasting model\src\models\train_price_models.py", line 321, in run
+    search.fit(X_train, y_train, groups=g_train)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "D:\forcasting model\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 1134, in fit
+    self._run_search(evaluate_candidates, callback_ctx=root_callback_ctx)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 2124, in _run_search
+    evaluate_candidates(candidate_params, callback_ctx=search_ctx)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\sklearn\model_selection\_search.py", line 1083, in evaluate_candidates
+    out = parallel(
+        delayed(_fit_and_score)(
+    ...<15 lines>...
+        ) in zip(candidate_split_pairs, evaluation_contexts)
+    )
+  File "D:\forcasting model\.venv\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 2098, in __call__
+    return output if self.return_generator else list(output)
+                                                ~~~~^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 1704, in _get_outputs
+    yield from self._retrieve()
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 1806, in _retrieve
+    self._raise_error_fast()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 1885, in _raise_error_fast
+    error_job.get_result(self.timeout)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 780, in get_result
+    return self._return_or_raise()
+           ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\forcasting model\.venv\Lib\site-packages\joblib\parallel.py", line 795, in _return_or_raise
+    raise self._result
+joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+
+Detailed tracebacks of the workers should have been printed to stderr in the executor process if faulthandler was not disabled.

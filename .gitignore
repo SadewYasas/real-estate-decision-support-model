@@ -7,3 +7,4 @@ catboost_info/
 frontend/node_modules/
 frontend/dist/
 Data/Raw/apartments_for_rent_classified_100K.csv
+artefacts/models/candidates/
