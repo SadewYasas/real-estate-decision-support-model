@@ -4,7 +4,7 @@
   "monthly_rent": 2600.0885252333337,
   "H": 7,
   "method": {
-    "g": "gbm_macro (HPI); shocks re-run gbm_macro",
+    "g": "gbm_macro_constrained (HPI); shocks re-run gbm_macro",
     "q": "arima base + change predicted by the rent gbm_macro model",
     "bands": "pessimistic / optimistic = forecast p10 / p90"
   },
@@ -12,66 +12,66 @@
     {
       "scenario": "base",
       "label": "Base forecast",
-      "g": 0.02646911360476586,
+      "g": 0.030902914419901374,
       "q": 0.03574599805581036,
       "r": 0.063525,
-      "delta": 37554.2663258113,
+      "delta": 46062.51149408083,
       "recommendation": "buy",
-      "break_even_year": 4,
+      "break_even_year": 3,
       "flips_vs_base": false,
       "delta_change_vs_base": 0.0
     },
     {
       "scenario": "pessimistic",
       "label": "Pessimistic market: 10th percentile growth (g and q)",
-      "g": -0.009061913342865555,
+      "g": -0.006023020687545922,
       "q": 0.025784063128433177,
       "r": 0.063525,
-      "delta": -28451.190838244453,
+      "delta": -23788.315191119094,
       "recommendation": "rent",
-      "break_even_year": 13,
+      "break_even_year": 12,
       "flips_vs_base": true,
-      "delta_change_vs_base": -66005.45716405576
+      "delta_change_vs_base": -69850.82668519992
     },
     {
       "scenario": "optimistic",
       "label": "Optimistic market: 90th percentile growth (g and q)",
-      "g": 0.1169400733004066,
+      "g": 0.11909891455724607,
       "q": 0.0694029961671776,
       "r": 0.063525,
-      "delta": 283678.0880144233,
+      "delta": 290615.0953986797,
       "recommendation": "buy",
       "break_even_year": 1,
       "flips_vs_base": false,
-      "delta_change_vs_base": 246123.82168861202
+      "delta_change_vs_base": 244552.5839045989
     },
     {
       "scenario": "rate_rise",
       "label": "Interest rates +1 pp (mortgage and fed funds)",
-      "g": 0.03262929567823913,
+      "g": 0.020874221126867792,
       "q": 0.035615384096304666,
       "r": 0.073525,
-      "delta": 32400.2519302945,
+      "delta": 10102.159353131545,
       "recommendation": "buy",
-      "break_even_year": 4,
+      "break_even_year": 6,
       "shock": {
         "mortgage": 1.0,
         "mortgage_chg12": 1.0,
         "fed_funds": 1.0
       },
-      "g_change": 0.006160182073473264,
+      "g_change": -0.010028693293033583,
       "q_change": -0.0001306139595056921,
       "r_change": 0.01,
       "flips_vs_base": false,
-      "delta_change_vs_base": -5154.014395516802
+      "delta_change_vs_base": -35960.35214094928
     },
     {
       "scenario": "rate_cut",
       "label": "Interest rates -1 pp (mortgage and fed funds)",
-      "g": 0.02598531249086443,
+      "g": 0.03047564416784978,
       "q": 0.023916492609149666,
       "r": 0.053524999999999996,
-      "delta": 46794.43550524884,
+      "delta": 55387.45329389008,
       "recommendation": "buy",
       "break_even_year": 3,
       "shock": {
@@ -79,19 +79,19 @@
         "mortgage_chg12": -1.0,
         "fed_funds": -1.0
       },
-      "g_change": -0.00048380111390143197,
+      "g_change": -0.00042727025205159476,
       "q_change": -0.011829505446660692,
       "r_change": -0.01,
       "flips_vs_base": false,
-      "delta_change_vs_base": 9240.169179437537
+      "delta_change_vs_base": 9324.941799809254
     },
     {
       "scenario": "recession",
       "label": "Recession: unemployment +2 pp, permits -20%, state GDP -3 pp, rates -0.5 pp",
-      "g": 0.027584876288468205,
+      "g": 0.030772626427714073,
       "q": 0.035498578568665055,
       "r": 0.058525,
-      "delta": 47937.43627250401,
+      "delta": 54072.7505954605,
       "recommendation": "buy",
       "break_even_year": 3,
       "shock": {
@@ -103,19 +103,19 @@
         "mortgage_chg12": -0.5,
         "fed_funds": -0.5
       },
-      "g_change": 0.0011157626837023438,
+      "g_change": -0.00013028799218730124,
       "q_change": -0.0002474194871453017,
       "r_change": -0.005,
       "flips_vs_base": false,
-      "delta_change_vs_base": 10383.16994669271
+      "delta_change_vs_base": 8010.239101379673
     },
     {
       "scenario": "inflation",
       "label": "Inflation +2 pp with rates +0.75 pp",
-      "g": 0.03141307307039433,
+      "g": 0.03286619204476151,
       "q": 0.05005966793145663,
       "r": 0.071025,
-      "delta": 42669.07983711324,
+      "delta": 45516.22455777714,
       "recommendation": "buy",
       "break_even_year": 4,
       "shock": {
@@ -124,13 +124,13 @@
         "mortgage_chg12": 0.75,
         "fed_funds": 0.75
       },
-      "g_change": 0.004943959465628467,
+      "g_change": 0.0019632776248601357,
       "q_change": 0.014313669875646272,
       "r_change": 0.0075,
       "flips_vs_base": false,
-      "delta_change_vs_base": 5114.813511301938
+      "delta_change_vs_base": -546.286936303688
     }
   ],
   "disclaimer": "Indicative decision support only \u2013 not financial or valuation advice",
-  "example": "3-bed, 2-bath, 1,800 sq ft house in Austin, TX: predicted price $374,575; predicted rent $2,600/month ($1,959 in 2019 x CPI factor 1.327 to 2025-09); g 2.65% (gbm_macro), q 3.57% (arima), r 6.35% (2025-09). Illustrative, not a valuation."
+  "example": "3-bed, 2-bath, 1,800 sq ft house in Austin, TX: predicted price $374,575; predicted rent $2,600/month ($1,959 in 2019 x CPI factor 1.327 to 2025-09); g 3.09% (gbm_macro_constrained), q 3.57% (arima), r 6.35% (2025-09). Illustrative, not a valuation."
 }

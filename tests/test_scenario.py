@@ -61,9 +61,25 @@ def test_zero_shock_changes_nothing():
 
 
 @needs_forecasts
+@pytest.mark.parametrize("feature", ["mortgage", "mortgage_chg12", "unemp", "unemp_chg12"])
+def test_constrained_hpi_model_is_monotonic(feature):
+    """If the scenarios use the constrained model, raising a constrained feature alone can
+    never raise predicted HPI growth, in any state."""
+    from src.engine.scenario import Forecaster
+    fc = Forecaster()
+    if fc.models["hpi"].get("variant") != "gbm_macro_constrained":
+        pytest.skip("scenarios use the unconstrained model")
+    states = sorted(fc.forecasts["hpi"]["forecasts"])
+    for state in states:
+        preds = [fc._gbm("hpi", state, {feature: step}) for step in (-3, -1, 0, 1, 3)]
+        assert all(b <= a + 1e-12 for a, b in zip(preds, preds[1:])), (state, preds)
+
+
+@needs_forecasts
 def test_hpi_shock_reproduces_stored_forecast_when_unshocked():
     from src.engine.scenario import Forecaster
     fc = Forecaster()
     f = json.loads((MODELS_DIR / "forecasts.json").read_text())
+    variant = fc.models["hpi"]["variant"]
     for state in ("CA", "TX", "NY"):
-        assert fc._gbm("hpi", state, None) == pytest.approx(f["hpi"]["forecasts"][state]["gbm_macro"])
+        assert fc._gbm("hpi", state, None) == pytest.approx(f["hpi"]["forecasts"][state][variant])

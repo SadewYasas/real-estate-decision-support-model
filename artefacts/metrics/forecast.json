@@ -34,6 +34,13 @@
         "n": 1530,
         "acceleration_accuracy": 0.5836601307189543
       },
+      "gbm_macro_constrained": {
+        "mae": 3.580676578313904,
+        "rmse": 5.383323994891856,
+        "directional_accuracy": 0.9836601307189542,
+        "n": 1530,
+        "acceleration_accuracy": 0.5895424836601307
+      },
       "gbm_no_macro": {
         "mae": 4.903932928075889,
         "rmse": 7.090233709061151,
@@ -57,6 +64,13 @@
     },
     "base_rate_actual_growth_positive": 0.9836601307189542,
     "dm_tests_vs_gbm_macro": {
+      "gbm_macro_constrained": {
+        "mean_loss_difference": 0.2808950196265003,
+        "dm_stat": 0.3646793385003372,
+        "p_value": 0.715350783481862,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
       "gbm_no_macro": {
         "mean_loss_difference": -21.010341795502143,
         "dm_stat": -1.9919689163341465,
@@ -79,6 +93,36 @@
         "better": "gbm_macro"
       }
     },
+    "dm_tests_vs_gbm_macro_constrained": {
+      "gbm_macro": {
+        "mean_loss_difference": -0.2808950196265003,
+        "dm_stat": -0.3646793385003372,
+        "p_value": 0.715350783481862,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "gbm_no_macro": {
+        "mean_loss_difference": -21.291236815128638,
+        "dm_stat": -2.027761916729343,
+        "p_value": 0.04258455291855756,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "persistence": {
+        "mean_loss_difference": -14.451396848814943,
+        "dm_stat": -1.0770277814620774,
+        "p_value": 0.2814678545066389,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      },
+      "arima": {
+        "mean_loss_difference": -7.420256222050122,
+        "dm_stat": -1.2698328446773945,
+        "p_value": 0.20414417847916821,
+        "n_origins": 30,
+        "better": "gbm_macro_constrained"
+      }
+    },
     "dm_test_gbm_no_macro_vs_persistence": {
       "mean_loss_difference": 6.839839966313703,
       "dm_stat": 0.9617478979622198,
@@ -88,18 +132,32 @@
     },
     "macro_improves_on_no_macro": true,
     "gbm_macro_beats_persistence": true,
-    "recommended_method": "gbm_macro",
-    "recommended_rule": "lowest backtest RMSE",
+    "gbm_selection": {
+      "gbm_variant": "gbm_macro_constrained",
+      "rule": "use gbm_macro_constrained if its RMSE <= 1.05 x gbm_macro RMSE",
+      "rmse_ratio_constrained_to_unconstrained": 0.9951886179465315,
+      "monotonic_constraints": {
+        "mortgage": -1,
+        "mortgage_chg12": -1,
+        "unemp": -1,
+        "unemp_chg12": -1
+      }
+    },
+    "recommended_method": "gbm_macro_constrained",
+    "recommended_rule": "lowest backtest RMSE among the selected gbm + macro variant, gbm_no_macro, persistence and ARIMA",
     "error_band": {
-      "method": "gbm_macro",
-      "p10": -3.5531026947631417,
-      "p90": 9.047095969564072,
+      "method": "gbm_macro_constrained",
+      "p10": -3.6925935107447296,
+      "p90": 8.819600013734469,
       "empirical_coverage": 0.8
     },
     "mae_by_origin_year": {
       "2018": {
         "gbm_macro": {
           "mae": 1.2247560684759098
+        },
+        "gbm_macro_constrained": {
+          "mae": 1.3180388179070774
         },
         "gbm_no_macro": {
           "mae": 1.3097422188427679
@@ -115,6 +173,9 @@
         "gbm_macro": {
           "mae": 1.3810846180643808
         },
+        "gbm_macro_constrained": {
+          "mae": 1.3304560234232556
+        },
         "gbm_no_macro": {
           "mae": 1.3505944007830244
         },
@@ -128,6 +189,9 @@
       "2020": {
         "gbm_macro": {
           "mae": 8.943616459317672
+        },
+        "gbm_macro_constrained": {
+          "mae": 8.899265213493088
         },
         "gbm_no_macro": {
           "mae": 8.709011550965133
@@ -143,6 +207,9 @@
         "gbm_macro": {
           "mae": 8.562509519043077
         },
+        "gbm_macro_constrained": {
+          "mae": 8.2714505854123
+        },
         "gbm_no_macro": {
           "mae": 9.171967059048852
         },
@@ -156,6 +223,9 @@
       "2022": {
         "gbm_macro": {
           "mae": 2.961034996783793
+        },
+        "gbm_macro_constrained": {
+          "mae": 3.0590357177535363
         },
         "gbm_no_macro": {
           "mae": 8.253396186470386
@@ -171,6 +241,9 @@
         "gbm_macro": {
           "mae": 1.4356666307626331
         },
+        "gbm_macro_constrained": {
+          "mae": 1.545640232913528
+        },
         "gbm_no_macro": {
           "mae": 3.165635989573285
         },
@@ -184,6 +257,9 @@
       "2024": {
         "gbm_macro": {
           "mae": 1.6815719971651326
+        },
+        "gbm_macro_constrained": {
+          "mae": 1.6745506012430718
         },
         "gbm_no_macro": {
           "mae": 3.4197772105623194
@@ -199,6 +275,9 @@
         "gbm_macro": {
           "mae": 1.4520520173453701
         },
+        "gbm_macro_constrained": {
+          "mae": 1.5132742904168477
+        },
         "gbm_no_macro": {
           "mae": 2.7987446886467984
         },
@@ -213,306 +292,357 @@
     "mae_by_state": {
       "AK": {
         "gbm_macro": 2.828641315209381,
+        "gbm_macro_constrained": 2.866217521996922,
         "gbm_no_macro": 4.3411178907503265,
         "persistence": 2.8237088580181338,
         "arima": 2.443442324091751
       },
       "AL": {
         "gbm_macro": 3.1613222934633,
+        "gbm_macro_constrained": 3.076118296845969,
         "gbm_no_macro": 5.1081983164215785,
         "persistence": 3.862293326969786,
         "arima": 3.6766493197582806
       },
       "AR": {
         "gbm_macro": 3.0913386219272416,
+        "gbm_macro_constrained": 3.1122414768251097,
         "gbm_no_macro": 5.185267624690836,
         "persistence": 4.033546703085296,
         "arima": 3.490545657153851
       },
       "AZ": {
         "gbm_macro": 5.227697862111439,
+        "gbm_macro_constrained": 5.348388822009134,
         "gbm_no_macro": 6.83464621073496,
         "persistence": 7.37344218887055,
         "arima": 5.797155111063909
       },
       "CA": {
         "gbm_macro": 4.3885047069888365,
+        "gbm_macro_constrained": 4.366486332243323,
         "gbm_no_macro": 5.306538404884112,
         "persistence": 5.970429225486241,
         "arima": 4.8795935053323545
       },
       "CO": {
         "gbm_macro": 5.036891314329442,
+        "gbm_macro_constrained": 4.78216378730765,
         "gbm_no_macro": 5.478095929032805,
         "persistence": 5.745912556739606,
         "arima": 4.601455446753926
       },
       "CT": {
         "gbm_macro": 4.3422615201199735,
+        "gbm_macro_constrained": 4.389995370211577,
         "gbm_no_macro": 5.483297616168012,
         "persistence": 3.6124000146118065,
         "arima": 3.8030379928344478
       },
       "DC": {
         "gbm_macro": 3.557405458582231,
+        "gbm_macro_constrained": 3.5051682754965077,
         "gbm_no_macro": 3.303459086762854,
         "persistence": 3.8099713828697883,
         "arima": 3.384877361148312
       },
       "DE": {
         "gbm_macro": 3.5722709218448463,
+        "gbm_macro_constrained": 3.6477746730980556,
         "gbm_no_macro": 5.130898938823608,
         "persistence": 3.610576230716364,
         "arima": 3.4151487949139674
       },
       "FL": {
         "gbm_macro": 4.514270506533384,
+        "gbm_macro_constrained": 4.372083582247745,
         "gbm_no_macro": 6.4258014583261245,
         "persistence": 6.600348051790514,
         "arima": 5.119661004698013
       },
       "GA": {
         "gbm_macro": 3.2594391589139673,
+        "gbm_macro_constrained": 3.2316866322177873,
         "gbm_no_macro": 5.214230957391508,
         "persistence": 5.1626408839485896,
         "arima": 5.658820509064933
       },
       "HI": {
         "gbm_macro": 4.098029089729127,
+        "gbm_macro_constrained": 4.041955170724622,
         "gbm_no_macro": 6.59169597533008,
         "persistence": 6.598542950615633,
         "arima": 6.328938279609054
       },
       "IA": {
         "gbm_macro": 2.350477775575577,
+        "gbm_macro_constrained": 2.4625382770022513,
         "gbm_no_macro": 3.627994291670269,
         "persistence": 2.787080669878959,
         "arima": 3.265102162184084
       },
       "ID": {
         "gbm_macro": 6.2848498812991185,
+        "gbm_macro_constrained": 6.348151428997997,
         "gbm_no_macro": 6.454850570616858,
         "persistence": 7.791123750960976,
         "arima": 6.7357677594912815
       },
       "IL": {
         "gbm_macro": 2.874080095971498,
+        "gbm_macro_constrained": 3.01239617909103,
         "gbm_no_macro": 3.079508913871984,
         "persistence": 2.947318785267437,
         "arima": 3.792603930097559
       },
       "IN": {
         "gbm_macro": 2.8044479127085795,
+        "gbm_macro_constrained": 2.854157777496632,
         "gbm_no_macro": 4.0628358421063195,
         "persistence": 3.3829900383898006,
         "arima": 5.162011722029268
       },
       "KS": {
         "gbm_macro": 2.796685271065928,
+        "gbm_macro_constrained": 2.870060087139587,
         "gbm_no_macro": 4.564003858279975,
         "persistence": 3.2183177278825443,
         "arima": 4.047402090816898
       },
       "KY": {
         "gbm_macro": 2.7954739327642844,
+        "gbm_macro_constrained": 2.840034109810587,
         "gbm_no_macro": 4.082754047088709,
         "persistence": 3.2791965875081655,
         "arima": 3.824444218063997
       },
       "LA": {
         "gbm_macro": 2.6556727566184413,
+        "gbm_macro_constrained": 2.5577961103774145,
         "gbm_no_macro": 3.5537578819778584,
         "persistence": 3.15768052905116,
         "arima": 2.438579771018038
       },
       "MA": {
         "gbm_macro": 3.164271513014499,
+        "gbm_macro_constrained": 3.185370651452387,
         "gbm_no_macro": 4.040840957672858,
         "persistence": 3.663292258444962,
         "arima": 3.3733028030515366
       },
       "MD": {
         "gbm_macro": 3.116914844984014,
+        "gbm_macro_constrained": 3.1882033957408598,
         "gbm_no_macro": 3.993696693845843,
         "persistence": 3.334464546816064,
         "arima": 3.2039613160521485
       },
       "ME": {
         "gbm_macro": 4.115868729148055,
+        "gbm_macro_constrained": 3.9877541904710765,
         "gbm_no_macro": 6.398442071880577,
         "persistence": 4.550587837682082,
         "arima": 4.2896347420117165
       },
       "MI": {
         "gbm_macro": 2.98054094048879,
+        "gbm_macro_constrained": 2.9052770174363904,
         "gbm_no_macro": 3.3114810177715044,
         "persistence": 3.5057927823671977,
         "arima": 4.965381278201146
       },
       "MN": {
         "gbm_macro": 2.60510220178746,
+        "gbm_macro_constrained": 2.5583242109760462,
         "gbm_no_macro": 3.44696329519572,
         "persistence": 3.1629504747694286,
         "arima": 2.9358752398954473
       },
       "MO": {
         "gbm_macro": 2.8708956117013122,
+        "gbm_macro_constrained": 2.917968491587745,
         "gbm_no_macro": 4.5760370563085395,
         "persistence": 3.3752909854591526,
         "arima": 4.2685748464577085
       },
       "MS": {
         "gbm_macro": 3.0167441209557446,
+        "gbm_macro_constrained": 2.9519996812065528,
         "gbm_no_macro": 4.718366340037222,
         "persistence": 3.7844827203019777,
         "arima": 3.2768335593377347
       },
       "MT": {
         "gbm_macro": 4.101529171226284,
+        "gbm_macro_constrained": 4.0506234898341535,
         "gbm_no_macro": 6.5190077384144045,
         "persistence": 5.849976243361836,
         "arima": 5.28456152424165
       },
       "NC": {
         "gbm_macro": 3.3733384895102203,
+        "gbm_macro_constrained": 3.354884509948948,
         "gbm_no_macro": 5.634142820691626,
         "persistence": 5.20839457626502,
         "arima": 5.985752120731316
       },
       "ND": {
         "gbm_macro": 2.4254480069547286,
+        "gbm_macro_constrained": 2.4614111971380894,
         "gbm_no_macro": 2.7826248996448846,
         "persistence": 2.551049786744413,
         "arima": 2.0885635451308087
       },
       "NE": {
         "gbm_macro": 2.84243746931881,
+        "gbm_macro_constrained": 2.8200838279955267,
         "gbm_no_macro": 3.8004065316052547,
         "persistence": 3.360537715855497,
         "arima": 3.950418479364877
       },
       "NH": {
         "gbm_macro": 3.7188804116862824,
+        "gbm_macro_constrained": 3.701469889850189,
         "gbm_no_macro": 5.298027906947369,
         "persistence": 4.013904949954855,
         "arima": 3.8885900315129627
       },
       "NJ": {
         "gbm_macro": 4.045881178666184,
+        "gbm_macro_constrained": 4.041681511892686,
         "gbm_no_macro": 5.418959652125966,
         "persistence": 3.75314301489963,
         "arima": 3.2404727917280978
       },
       "NM": {
         "gbm_macro": 3.437600679099793,
+        "gbm_macro_constrained": 3.3733781746648237,
         "gbm_no_macro": 5.399973999504518,
         "persistence": 3.7767304210913313,
         "arima": 3.432273920362377
       },
       "NV": {
         "gbm_macro": 5.963002282283336,
+        "gbm_macro_constrained": 5.942249895461869,
         "gbm_no_macro": 6.781944766062461,
         "persistence": 8.38663108602,
         "arima": 5.693927638990784
       },
       "NY": {
         "gbm_macro": 2.781625981925737,
+        "gbm_macro_constrained": 2.863984739558548,
         "gbm_no_macro": 3.5783982188814516,
         "persistence": 2.9657282776444833,
         "arima": 3.1553785464301263
       },
       "OH": {
         "gbm_macro": 2.907902392215567,
+        "gbm_macro_constrained": 2.9643282118674277,
         "gbm_no_macro": 4.091693993354344,
         "persistence": 3.1076829139621798,
         "arima": 5.134979375782786
       },
       "OK": {
         "gbm_macro": 2.821463905821126,
+        "gbm_macro_constrained": 2.8659468204264797,
         "gbm_no_macro": 4.981903099470126,
         "persistence": 3.756197014548895,
         "arima": 3.645014268507056
       },
       "OR": {
         "gbm_macro": 4.572754315518731,
+        "gbm_macro_constrained": 4.416751729985309,
         "gbm_no_macro": 4.7745619250568705,
         "persistence": 5.167447693224359,
         "arima": 4.001380134629385
       },
       "PA": {
         "gbm_macro": 2.8435944563064033,
+        "gbm_macro_constrained": 2.8135393655169714,
         "gbm_no_macro": 4.044073124479573,
         "persistence": 2.8648597126041144,
         "arima": 3.249640976030234
       },
       "RI": {
         "gbm_macro": 3.983913120390303,
+        "gbm_macro_constrained": 3.9341104019559956,
         "gbm_no_macro": 5.4470505535578635,
         "persistence": 4.539160457500688,
         "arima": 3.9893969003559873
       },
       "SC": {
         "gbm_macro": 3.0376276193662144,
+        "gbm_macro_constrained": 3.0361811269608565,
         "gbm_no_macro": 5.509156086489284,
         "persistence": 4.640552593607564,
         "arima": 4.798610042401323
       },
       "SD": {
         "gbm_macro": 2.9895393765115257,
+        "gbm_macro_constrained": 2.9817549428210812,
         "gbm_no_macro": 4.5833952036343915,
         "persistence": 4.288528938026,
         "arima": 3.6825503554973458
       },
       "TN": {
         "gbm_macro": 3.6061324789035885,
+        "gbm_macro_constrained": 3.4541009071136957,
         "gbm_no_macro": 5.423059574168406,
         "persistence": 5.515690682926547,
         "arima": 4.922357981369775
       },
       "TX": {
         "gbm_macro": 3.8196202672145914,
+        "gbm_macro_constrained": 3.771616827093496,
         "gbm_no_macro": 5.028857535516095,
         "persistence": 5.3042455951795064,
         "arima": 4.80681918847623
       },
       "UT": {
         "gbm_macro": 5.628348717749318,
+        "gbm_macro_constrained": 5.595896910452672,
         "gbm_no_macro": 6.622941619893639,
         "persistence": 7.438621495498624,
         "arima": 5.266455370833388
       },
       "VA": {
         "gbm_macro": 3.216277845800929,
+        "gbm_macro_constrained": 3.234840974700729,
         "gbm_no_macro": 4.69375672407279,
         "persistence": 3.269010120497309,
         "arima": 2.9274273230246037
       },
       "VT": {
         "gbm_macro": 4.685218653801936,
+        "gbm_macro_constrained": 4.691775177626797,
         "gbm_no_macro": 6.39898072581379,
         "persistence": 4.191648822452501,
         "arima": 4.159072935357357
       },
       "WA": {
         "gbm_macro": 4.899884528336247,
+        "gbm_macro_constrained": 4.884777510485017,
         "gbm_no_macro": 5.486414120678396,
         "persistence": 6.242202128334365,
         "arima": 4.873821058447153
       },
       "WI": {
         "gbm_macro": 3.016083076704069,
+        "gbm_macro_constrained": 3.0617949080243156,
         "gbm_no_macro": 4.502179905789751,
         "persistence": 3.096600310901008,
         "arima": 4.28418467595519
       },
       "WV": {
         "gbm_macro": 3.6031081499489157,
+        "gbm_macro_constrained": 3.6740472612965656,
         "gbm_no_macro": 4.005293921095798,
         "persistence": 3.525453343766094,
         "arima": 2.9896212126910573
       },
       "WY": {
         "gbm_macro": 3.199299895242636,
+        "gbm_macro_constrained": 3.2429636313258996,
         "gbm_no_macro": 4.97899343728024,
         "persistence": 4.056476775747041,
         "arima": 3.8696386094751802
@@ -604,8 +734,11 @@
     },
     "macro_improves_on_no_macro": true,
     "gbm_macro_beats_persistence": true,
+    "gbm_selection": {
+      "gbm_variant": "gbm_macro"
+    },
     "recommended_method": "arima",
-    "recommended_rule": "lowest backtest RMSE",
+    "recommended_rule": "lowest backtest RMSE among the selected gbm + macro variant, gbm_no_macro, persistence and ARIMA",
     "error_band": {
       "method": "arima",
       "p10": -0.9961934927377181,

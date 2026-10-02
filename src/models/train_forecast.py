@@ -6,6 +6,11 @@ src/pipeline/build_panel.py. Baselines (CLAUDE.md):
   (b) ARIMA per series on the log level (orders (1,1,0), (0,1,1), (1,1,1), (2,1,0) with
       drift, chosen by AIC at every origin);
   (c) the same gradient boosting model without the macro features.
+HPI also has a constrained variant, gbm_macro_constrained: the same model with monotonic
+constraints so that a higher mortgage rate, a rise in the mortgage rate, higher
+unemployment or a rise in unemployment can never raise predicted HPI growth (all other
+features unconstrained). It is used for the forecasts and scenarios if its backtest RMSE
+is within 5% of the unconstrained model's; otherwise gbm_macro is kept.
 
 Evaluation: expanding-window rolling origin from 2018. At origin t every model is
 refitted on the rows whose target was already known at t (origin <= t - horizon), then
@@ -52,9 +57,13 @@ from src.pipeline.build_panel import (HPI_BASE, HPI_HORIZON, HPI_MACRO, RENT_BAS
                                       RENT_MACRO, load_cpi_rent, load_fred, load_hpi)
 
 ARIMA_ORDERS = [(1, 1, 0), (0, 1, 1), (1, 1, 1), (2, 1, 0)]
-METHODS = ["gbm_macro", "gbm_no_macro", "persistence", "arima"]
-METHOD_LABELS = {"gbm_macro": "Gradient boosting + macro", "gbm_no_macro": "Gradient boosting, no macro",
+METHOD_LABELS = {"gbm_macro": "Gradient boosting + macro",
+                 "gbm_macro_constrained": "Gradient boosting + macro, monotonic",
+                 "gbm_no_macro": "Gradient boosting, no macro",
                  "persistence": "Persistence", "arima": "ARIMA"}
+# Negative effect only (-1): rates and unemployment can only lower predicted HPI growth.
+HPI_MONOTONIC = {"mortgage": -1, "mortgage_chg12": -1, "unemp": -1, "unemp_chg12": -1}
+CONSTRAINED_RMSE_TOLERANCE = 1.05   # use the constrained model if RMSE <= 1.05 x unconstrained
 
 SPECS = {
     "hpi": {
@@ -64,6 +73,9 @@ SPECS = {
         "first_origin": "2018Q1", "latest_origin": "2025Q3", "arima_start": "2000Q1",
         "gbm": dict(max_iter=300, learning_rate=0.05, max_depth=3, min_samples_leaf=20,
                     l2_regularization=1.0),
+        # name: (uses macro features, monotonic constraints)
+        "variants": {"gbm_macro": (True, None), "gbm_macro_constrained": (True, HPI_MONOTONIC),
+                     "gbm_no_macro": (False, None)},
     },
     "rent": {
         "label": "rent growth (BLS CPI rent of primary residence, US, NSA)",
@@ -73,6 +85,7 @@ SPECS = {
         # One national series: far fewer rows, so a smaller model.
         "gbm": dict(max_iter=200, learning_rate=0.05, max_depth=2, min_samples_leaf=8,
                     l2_regularization=1.0),
+        "variants": {"gbm_macro": (True, None), "gbm_no_macro": (False, None)},
     },
 }
 
@@ -110,9 +123,14 @@ def features(spec: dict, macro: bool) -> list[str]:
     return cols + (["series"] if spec["id"] is not None else [])
 
 
-def make_gbm(spec: dict) -> HistGradientBoostingRegressor:
+def methods(spec: dict) -> list[str]:
+    return list(spec["variants"]) + ["persistence", "arima"]
+
+
+def make_gbm(spec: dict, monotonic: dict | None = None) -> HistGradientBoostingRegressor:
     return HistGradientBoostingRegressor(**spec["gbm"], early_stopping=False,
                                          categorical_features="from_dtype",
+                                         monotonic_cst=monotonic,
                                          random_state=RANDOM_STATE)
 
 
@@ -150,9 +168,9 @@ def backtest(name: str, spec: dict, df: pd.DataFrame) -> pd.DataFrame:
         train = known[known["t"] <= t - h]
         test = known[known["t"] == t]
         out = test[["series", "period", "t", "target"]].copy()
-        for method, macro in (("gbm_macro", True), ("gbm_no_macro", False)):
+        for method, (macro, mono) in spec["variants"].items():
             cols = features(spec, macro)
-            out[method] = make_gbm(spec).fit(train[cols], train["target"]).predict(test[cols])
+            out[method] = make_gbm(spec, mono).fit(train[cols], train["target"]).predict(test[cols])
         out["persistence"] = test[spec["base"][0]].to_numpy()
         out["past_growth"] = test[spec["base"][0]].to_numpy()
         out["n_train"] = len(train)
@@ -202,13 +220,28 @@ def dm_test(bt: pd.DataFrame, a: str, b: str, lag: int) -> dict:
 
 def evaluate(name: str, spec: dict, bt: pd.DataFrame) -> dict:
     lag = spec["horizon"] - 1
-    metrics = {m: method_metrics(bt, m) for m in METHODS}
-    best = min(METHODS, key=lambda m: metrics[m]["rmse"])
+    ms = methods(spec)
+    metrics = {m: method_metrics(bt, m) for m in ms}
+
+    # Which gradient-boosting + macro variant feeds the forecasts and scenarios.
+    selection = {"gbm_variant": "gbm_macro"}
+    if "gbm_macro_constrained" in ms:
+        ratio = metrics["gbm_macro_constrained"]["rmse"] / metrics["gbm_macro"]["rmse"]
+        use_constrained = ratio <= CONSTRAINED_RMSE_TOLERANCE
+        selection = {
+            "gbm_variant": "gbm_macro_constrained" if use_constrained else "gbm_macro",
+            "rule": f"use gbm_macro_constrained if its RMSE <= {CONSTRAINED_RMSE_TOLERANCE} x gbm_macro RMSE",
+            "rmse_ratio_constrained_to_unconstrained": float(ratio),
+            "monotonic_constraints": HPI_MONOTONIC,
+        }
+    other_variant = {"gbm_macro", "gbm_macro_constrained"} - {selection["gbm_variant"]}
+    pool = [m for m in ms if m not in other_variant]
+    best = min(pool, key=lambda m: metrics[m]["rmse"])
     errors = bt["actual"] - bt[best]
     p10, p90 = float(errors.quantile(0.10)), float(errors.quantile(0.90))
     by_year = {}
     for year, g in bt.groupby(bt["period"].dt.year):
-        by_year[int(year)] = {m: {"mae": float((g["actual"] - g[m]).abs().mean())} for m in METHODS}
+        by_year[int(year)] = {m: {"mae": float((g["actual"] - g[m]).abs().mean())} for m in ms}
     result = {
         "target": spec["label"],
         "horizon": f"{spec['horizon']} {'quarters' if spec['freq'] == 'Q' else 'months'} ahead, % growth",
@@ -220,19 +253,24 @@ def evaluate(name: str, spec: dict, bt: pd.DataFrame) -> dict:
         "metrics": metrics,
         "base_rate_actual_growth_positive": float((bt["actual"] > 0).mean()),
         "dm_tests_vs_gbm_macro": {b: dm_test(bt, "gbm_macro", b, lag)
-                                  for b in METHODS if b != "gbm_macro"},
+                                  for b in ms if b != "gbm_macro"},
+        **({"dm_tests_vs_gbm_macro_constrained": {b: dm_test(bt, "gbm_macro_constrained", b, lag)
+                                                  for b in ms if b != "gbm_macro_constrained"}}
+           if "gbm_macro_constrained" in ms else {}),
         "dm_test_gbm_no_macro_vs_persistence": dm_test(bt, "gbm_no_macro", "persistence", lag),
         "macro_improves_on_no_macro": bool(metrics["gbm_macro"]["rmse"] < metrics["gbm_no_macro"]["rmse"]),
         "gbm_macro_beats_persistence": bool(metrics["gbm_macro"]["rmse"] < metrics["persistence"]["rmse"]),
+        "gbm_selection": selection,
         "recommended_method": best,
-        "recommended_rule": "lowest backtest RMSE",
+        "recommended_rule": ("lowest backtest RMSE among the selected gbm + macro variant, "
+                             "gbm_no_macro, persistence and ARIMA"),
         "error_band": {"method": best, "p10": p10, "p90": p90,
                        "empirical_coverage": float(((errors >= p10) & (errors <= p90)).mean())},
         "mae_by_origin_year": by_year,
     }
     if spec["id"] is not None:
         result["mae_by_state"] = {
-            s: {m: float((g["actual"] - g[m]).abs().mean()) for m in METHODS}
+            s: {m: float((g["actual"] - g[m]).abs().mean()) for m in ms}
             for s, g in bt.groupby("series")}
     return result
 
@@ -247,9 +285,9 @@ def latest_forecast(name: str, spec: dict, df: pd.DataFrame, ev: dict) -> dict:
     assert len(now), f"no feature rows at {T}"
     preds = pd.DataFrame({"series": now["series"].astype(str).to_numpy()})
     models = {}
-    for method, macro in (("gbm_macro", True), ("gbm_no_macro", False)):
+    for method, (macro, mono) in spec["variants"].items():
         cols = features(spec, macro)
-        models[method] = (make_gbm(spec).fit(train[cols], train["target"]), cols)
+        models[method] = (make_gbm(spec, mono).fit(train[cols], train["target"]), cols)
         preds[method] = models[method][0].predict(now[cols])
     preds["persistence"] = now[spec["base"][0]].to_numpy()
     levels = level_series(name)
@@ -258,11 +296,15 @@ def latest_forecast(name: str, spec: dict, df: pd.DataFrame, ev: dict) -> dict:
 
     band = ev["error_band"]
     best = band["method"]
-    joblib.dump({"model": models["gbm_macro"][0], "features": models["gbm_macro"][1],
-                 "origin": str(T), "horizon": h,
-                 "latest_features": now[models["gbm_macro"][1]].assign(
-                     series=now["series"].astype(str)).to_dict(orient="records")},
-                MODELS_DIR / f"{name}_forecast_model.joblib")
+    chosen = ev["gbm_selection"]["gbm_variant"]
+    for variant in [v for v in spec["variants"] if v.startswith("gbm_macro")]:
+        model, cols = models[variant]
+        bundle = {"model": model, "features": cols, "variant": variant, "origin": str(T),
+                  "horizon": h, "latest_features": now[cols].assign(
+                      series=now["series"].astype(str)).to_dict(orient="records")}
+        joblib.dump(bundle, MODELS_DIR / f"{name}_forecast_model_{variant}.joblib")
+        if variant == chosen:  # the one scenarios use
+            joblib.dump(bundle, MODELS_DIR / f"{name}_forecast_model.joblib")
 
     # Part of the forecast horizon has already happened: report it as a check, not a metric.
     out = {}
@@ -275,7 +317,7 @@ def latest_forecast(name: str, spec: dict, df: pd.DataFrame, ev: dict) -> dict:
             "forecast": float(r[best]),
             "p10": float(r[best] + band["p10"]),
             "p90": float(r[best] + band["p90"]),
-            **{m: float(r[m]) for m in METHODS},
+            **{m: float(r[m]) for m in methods(spec)},
             "realised_so_far": {"growth_pct": realised, "periods": int(steps),
                                 "to": str(pd.Period(ordinal=last, freq=spec["freq"]))},
         }
@@ -283,6 +325,7 @@ def latest_forecast(name: str, spec: dict, df: pd.DataFrame, ev: dict) -> dict:
         "origin": str(T),
         "horizon": ev["horizon"],
         "method": best,
+        "scenario_model": chosen,
         "band": f"10th-90th percentile of {best} backtest errors",
         "training_rows": int(len(train)),
         "forecasts": out,
@@ -302,10 +345,15 @@ def _style(ax):
 
 def plot_backtest(name: str, spec: dict, bt: pd.DataFrame, ev: dict):
     g = bt.groupby("t").agg(period=("period", "first"), actual=("actual", "mean"),
-                            **{m: (m, "mean") for m in METHODS})
+                            **{m: (m, "mean") for m in methods(spec)})
     x = g["period"].dt.to_timestamp()
-    fig, axes = plt.subplots(2, 2, figsize=(11, 6.8), sharex=True, sharey=True, facecolor=SURFACE)
-    for ax, m in zip(axes.flat, METHODS):
+    ms = methods(spec)
+    nrows = (len(ms) + 1) // 2
+    fig, axes = plt.subplots(nrows, 2, figsize=(11, 3.4 * nrows), sharex=True, sharey=True,
+                             facecolor=SURFACE)
+    for ax in axes.flat[len(ms):]:
+        ax.set_visible(False)
+    for ax, m in zip(axes.flat, ms):
         _style(ax)
         ax.axhline(0, color=GRID, linewidth=1)
         ax.plot(x, g["actual"], color=INK, linewidth=2, label="Actual")
@@ -317,8 +365,9 @@ def plot_backtest(name: str, spec: dict, bt: pd.DataFrame, ev: dict):
     unit = "4-quarter" if spec["freq"] == "Q" else "12-month"
     what = "mean across 51 states" if spec["id"] else "US"
     fig.supylabel(f"Next {unit} growth, % ({what})", fontsize=9, color=TEXT_2)
-    for ax in axes[1]:
+    for ax in axes.flat[max(len(ms) - 2, 0):len(ms)]:
         ax.set_xlabel("Forecast origin", fontsize=8.5, color=TEXT_2)
+        ax.tick_params(labelbottom=True)
     fig.suptitle(f"Rolling-origin backtest: {spec['label']}", x=0.01, ha="left",
                  fontsize=11.5, fontweight="bold", color=TEXT)
     fig.tight_layout()
@@ -327,11 +376,12 @@ def plot_backtest(name: str, spec: dict, bt: pd.DataFrame, ev: dict):
 
 
 def plot_error_by_state(ev: dict):
-    st = pd.DataFrame(ev["mae_by_state"]).T.sort_values("gbm_macro")
+    model = ev["gbm_selection"]["gbm_variant"]
+    st = pd.DataFrame(ev["mae_by_state"]).T.sort_values(model)
     fig, ax = plt.subplots(figsize=(7.5, 0.22 * len(st) + 1.4), facecolor=SURFACE)
     _style(ax)
     y = np.arange(len(st))
-    ax.barh(y, st["gbm_macro"], height=0.7, color=BLUE, label="Gradient boosting + macro")
+    ax.barh(y, st[model], height=0.7, color=BLUE, label=METHOD_LABELS[model])
     ax.scatter(st["persistence"], y, color=TEXT, s=14, zorder=3, label="Persistence")
     ax.set_yticks(y, st.index, fontsize=7.5)
     ax.set_ylim(-0.7, len(st) - 0.3)
@@ -348,14 +398,20 @@ def plot_error_by_state(ev: dict):
 # ----------------------------------------------------------------------------- main
 def print_summary(name: str, ev: dict):
     print(f"\n{name.upper()}  {ev['origins']}, {ev['n_series']} series")
-    print(f"  {'method':<30}{'MAE':>7}{'RMSE':>7}{'dir.acc':>9}{'accel.acc':>11}")
-    for m in METHODS:
+    print(f"  {'method':<38}{'MAE':>7}{'RMSE':>7}{'dir.acc':>9}{'accel.acc':>11}")
+    for m in ev["metrics"]:
         r = ev["metrics"][m]
         acc = f"{r['acceleration_accuracy']:.1%}" if "acceleration_accuracy" in r else "-"
-        print(f"  {METHOD_LABELS[m]:<30}{r['mae']:>7.2f}{r['rmse']:>7.2f}"
+        print(f"  {METHOD_LABELS[m]:<38}{r['mae']:>7.2f}{r['rmse']:>7.2f}"
               f"{r['directional_accuracy']:>9.1%}{acc:>11}")
     for b, d in ev["dm_tests_vs_gbm_macro"].items():
-        print(f"  DM gbm_macro vs {b:<13} stat {d['dm_stat']:+.2f}  p {d['p_value']:.3f}  better: {d['better']}")
+        print(f"  DM gbm_macro vs {b:<22} stat {d['dm_stat']:+.2f}  p {d['p_value']:.3f}  better: {d['better']}")
+    for b, d in ev.get("dm_tests_vs_gbm_macro_constrained", {}).items():
+        print(f"  DM constrained vs {b:<20} stat {d['dm_stat']:+.2f}  p {d['p_value']:.3f}  better: {d['better']}")
+    sel = ev["gbm_selection"]
+    if "rmse_ratio_constrained_to_unconstrained" in sel:
+        print(f"  constrained / unconstrained RMSE = {sel['rmse_ratio_constrained_to_unconstrained']:.3f}"
+              f" -> scenarios use {sel['gbm_variant']}")
     print(f"  recommended (lowest RMSE): {ev['recommended_method']}; band p10 {ev['error_band']['p10']:+.2f}"
           f" / p90 {ev['error_band']['p90']:+.2f}")
 
