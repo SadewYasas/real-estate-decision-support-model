@@ -1,0 +1,2 @@
+sale: 7,622 test rows, catboost, R2 log 0.8567, max relative difference 0.0e+00 -> REPRODUCED
+rent: 19,892 test rows, catboost, R2 log 0.8237, max relative difference 0.0e+00 -> REPRODUCED

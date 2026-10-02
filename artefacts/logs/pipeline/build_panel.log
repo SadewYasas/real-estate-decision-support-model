@@ -1,0 +1,4 @@
+Data quality: {"fred_placeholders_set_to_missing": {"state_unemployment_rate": ["2025-09"], "state_building_permits": ["2025-09"], "cpi": ["2025-09"], "building_permits": ["2025-09"]}, "cpi_rent_missing_months_since_2012": ["2025-10"]}
+HPI panel:  2,346 rows, 51 states, 2014Q2 - 2025Q3, targets to 2025Q2
+Rent panel: 151 rows, 2013-03 - 2025-09, targets to 2025-08
+CPI rent factors to 2025-09: 1.301 - 1.349, listing-weighted 1.327

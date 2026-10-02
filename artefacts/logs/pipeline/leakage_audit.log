@@ -1,0 +1,34 @@
+LEAKAGE AUDIT - plain-English summary
+
+(a) PPSq in house_train_proc.csv is price divided by area (PPSq x Area reproduces the price to within 4.8e-10).
+    Test R2 on log price without PPSq:  random_forest 0.608  xgboost 0.648
+    Test R2 on log price with PPSq:     random_forest 0.996  xgboost 0.993
+    The jump comes from the model reading the answer back, not from learning.
+    Zipcode_AvgPrice (a ZIP mean of the target over the whole file) also inflates R2:
+                                        random_forest 0.749  xgboost 0.753
+    This file is not used for training.
+
+(b) Genuine state-level macro data would be identical for every house in a state at a
+    given date, and national series (CPI, mortgage rate, fed funds) identical in every
+    state. In the Final Dataset all six vary from house to house within a state, and
+    the houses carry no listing date that could explain it.
+    Pooled within-state correlation with log price (within-state spread as % of total):
+      state_unemployment_rate   r = +0.005   (73%)
+      state_building_permits    r = +0.002   (11%)
+      state_real_gdp            r = +0.003   (2%)
+      mortgage_rate             r = -0.648   (87%)
+      interest_rate             r = -0.533   (91%)
+      cpi                       r = +0.005   (47%)
+    mortgage_rate and interest_rate are strongly tied to the individual house's price;
+    the other four show no within-state relationship but are still not real values.
+
+(c) Test R2 on log price:
+      with the macro columns:             random_forest 0.934  xgboost 0.983
+      macro shuffled within each state:   random_forest 0.832  xgboost 0.849
+      macro columns removed:              random_forest 0.842  xgboost 0.856
+    Shuffling within a state keeps any genuine state-level signal, so the accuracy lost
+    came from a house-level link between the macro values and price. Shuffled and
+    removed give almost the same R2: the columns add nothing real. That is leakage,
+    and the six columns are dropped from all models.
+
+Saved D:\forcasting model\artefacts\metrics\leakage_audit.json

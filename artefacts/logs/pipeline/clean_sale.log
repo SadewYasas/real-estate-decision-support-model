@@ -1,0 +1,19 @@
+{
+  "raw_rows": 39981,
+  "after_drop_duplicates": 38534,
+  "after_price_30k_5M": 38212,
+  "after_beds_baths_1_10": 38146,
+  "after_living_space_300_15000": 38060,
+  "after_drop_missing": 38058,
+  "final_rows": 38058,
+  "n_states": 29,
+  "dropped_columns": [
+    "state_unemployment_rate",
+    "state_building_permits",
+    "state_real_gdp",
+    "mortgage_rate",
+    "interest_rate",
+    "cpi"
+  ]
+}
+Saved 38,058 rows to D:\forcasting model\data\processed\sale_clean.csv

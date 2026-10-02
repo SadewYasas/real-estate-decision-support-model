@@ -1,0 +1,33 @@
+[hpi] ARIMA: 51 series x 30 origins ...
+
+HPI  2018Q1 - 2025Q2 (30 origins), 51 series
+  method                                    MAE   RMSE  dir.acc  accel.acc
+  Gradient boosting + macro                3.59   5.41    98.4%      58.4%
+  Gradient boosting + macro, monotonic     3.58   5.38    98.4%      59.0%
+  Gradient boosting, no macro              4.90   7.09    98.4%      46.4%
+  Persistence                              4.35   6.59    97.1%          -
+  ARIMA                                    4.15   6.03    97.9%      61.1%
+  DM gbm_macro vs gbm_macro_constrained  stat +0.36  p 0.715  better: gbm_macro_constrained
+  DM gbm_macro vs gbm_no_macro           stat -1.99  p 0.046  better: gbm_macro
+  DM gbm_macro vs persistence            stat -1.03  p 0.303  better: gbm_macro
+  DM gbm_macro vs arima                  stat -1.18  p 0.237  better: gbm_macro
+  DM constrained vs gbm_macro            stat -0.36  p 0.715  better: gbm_macro_constrained
+  DM constrained vs gbm_no_macro         stat -2.03  p 0.043  better: gbm_macro_constrained
+  DM constrained vs persistence          stat -1.08  p 0.281  better: gbm_macro_constrained
+  DM constrained vs arima                stat -1.27  p 0.204  better: gbm_macro_constrained
+  constrained / unconstrained RMSE = 0.995 -> scenarios use gbm_macro_constrained
+  recommended (lowest RMSE): gbm_macro_constrained; band p10 -3.69 / p90 +8.82
+[rent] ARIMA: 1 series x 91 origins ...
+
+RENT  2018-01 - 2025-08 (91 origins), 1 series
+  method                                    MAE   RMSE  dir.acc  accel.acc
+  Gradient boosting + macro                1.35   2.02   100.0%      75.8%
+  Gradient boosting, no macro              1.65   2.29   100.0%      62.6%
+  Persistence                              1.74   2.24   100.0%          -
+  ARIMA                                    1.12   1.62   100.0%      82.4%
+  DM gbm_macro vs gbm_no_macro           stat -1.11  p 0.267  better: gbm_macro
+  DM gbm_macro vs persistence            stat -0.77  p 0.442  better: gbm_macro
+  DM gbm_macro vs arima                  stat +1.61  p 0.107  better: arima
+  recommended (lowest RMSE): arima; band p10 -1.00 / p90 +3.37
+
+Finished in 106s

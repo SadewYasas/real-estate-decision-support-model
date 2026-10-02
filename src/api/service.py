@@ -204,10 +204,6 @@ class AnalysisService:
             "disclaimer": DISCLAIMER,
         }
 
-    def legacy_price(self, zip_code: str, state: str | None, beds, baths, sqft) -> float:
-        loc, _ = self.locate(zip_code, state)
-        return self.predict_price(loc, beds, baths, sqft)["predicted"]
-
 
 def to_jsonable(obj):
     """numpy / pandas scalars -> plain Python, for JSON responses."""

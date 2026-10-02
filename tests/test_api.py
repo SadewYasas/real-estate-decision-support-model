@@ -172,17 +172,9 @@ def test_forecast_unknown_state(client):
     assert r.status_code == 404 and r.get_json()["disclaimer"] == DISCLAIMER
 
 
-def test_legacy_predict_uses_new_sale_model(client):
-    body = {"Zipcode": "78704", "State": "TX", "Bedroom": "3", "Bathroom": "2", "Area": "1800",
-            "City": "Austin", "LotArea": ""}
-    status, d = post(client, "/predict", body)
-    _, a = post(client, "/api/analyse", AUSTIN)
-    assert status == 200 and d["prediction_usd"] == pytest.approx(a["price"]["predicted"], abs=0.01)
-    assert d["disclaimer"] == DISCLAIMER
-
-
 def test_unknown_route_and_method(client):
     assert client.get("/api/nothing").status_code == 404
+    assert client.post("/predict", json={}).status_code == 404     # legacy route removed
     assert client.get("/api/analyse").status_code == 405
 
 

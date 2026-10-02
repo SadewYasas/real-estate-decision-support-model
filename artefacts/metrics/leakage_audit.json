@@ -17,7 +17,7 @@
       "State"
     ],
     "r2_log_without_ppsq": {
-      "random_forest": 0.6077425085248881,
+      "random_forest": 0.6077425085248882,
       "xgboost": 0.6482741906089122
     },
     "r2_log_with_ppsq": {
@@ -287,7 +287,7 @@
       "xgboost": 0.9826581559631269
     },
     "r2_log_macro_shuffled_within_state": {
-      "random_forest": 0.8320954590756514,
+      "random_forest": 0.8320954590756513,
       "xgboost": 0.8486487553288187
     },
     "r2_log_without_macro": {

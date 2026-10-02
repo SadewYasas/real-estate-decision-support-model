@@ -82,13 +82,3 @@ class ScenarioIn(PropertyIn):
             if abs(change) > SHOCK_LIMITS[key]:
                 raise ValueError(f"shock to {key} must be within +/-{SHOCK_LIMITS[key]}")
         return v
-
-
-class LegacyPredictIn(BaseModel):
-    """Body sent by the current front end to /predict (kept until the Step 9 front end)."""
-    model_config = ConfigDict(extra="ignore")
-    Zipcode: str
-    State: str | None = None
-    Bedroom: Annotated[int, Field(ge=1, le=10)]
-    Bathroom: Annotated[float, Field(ge=1, le=10)]
-    Area: Annotated[int, Field(ge=300, le=15_000)]

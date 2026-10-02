@@ -1,0 +1,119 @@
+{
+  "run_at": "2026-10-03 01:07:58",
+  "retrained_price_models": false,
+  "total_seconds": 237.1,
+  "steps": [
+    {
+      "step": "clean_sale",
+      "returncode": 0,
+      "seconds": 0.9,
+      "produces": "data/processed/sale_clean.csv"
+    },
+    {
+      "step": "clean_rent",
+      "returncode": 0,
+      "seconds": 2.3,
+      "produces": "data/processed/rent_clean.csv"
+    },
+    {
+      "step": "leakage_audit",
+      "returncode": 0,
+      "seconds": 43.9,
+      "produces": "leakage_audit.json"
+    },
+    {
+      "step": "eda",
+      "returncode": 0,
+      "seconds": 4.0,
+      "produces": "eda_summary.json + 6 figures"
+    },
+    {
+      "step": "verify_price_models",
+      "returncode": 0,
+      "seconds": 2.9,
+      "produces": "price_models_reproducibility.json"
+    },
+    {
+      "step": "build_panel",
+      "returncode": 0,
+      "seconds": 1.1,
+      "produces": "HPI + rent panels, CPI factors"
+    },
+    {
+      "step": "train_forecast",
+      "returncode": 0,
+      "seconds": 108.6,
+      "produces": "forecast.json, forecasts.json"
+    },
+    {
+      "step": "build_zip_lookup",
+      "returncode": 0,
+      "seconds": 3.2,
+      "produces": "zip_lookup.csv"
+    },
+    {
+      "step": "tests",
+      "returncode": 0,
+      "seconds": 12.6,
+      "produces": "engine_tests.json (+ API tests)"
+    },
+    {
+      "step": "export_excel",
+      "returncode": 0,
+      "seconds": 7.8,
+      "produces": "engine_test_scenarios.xlsx"
+    },
+    {
+      "step": "engine_example",
+      "returncode": 0,
+      "seconds": 2.6,
+      "produces": "cost_over_time_example.png"
+    },
+    {
+      "step": "scenario_example",
+      "returncode": 0,
+      "seconds": 2.4,
+      "produces": "scenario_example.json"
+    },
+    {
+      "step": "sensitivity_example",
+      "returncode": 0,
+      "seconds": 2.5,
+      "produces": "tornado_sensitivity.png"
+    },
+    {
+      "step": "decision_flip",
+      "returncode": 0,
+      "seconds": 10.8,
+      "produces": "decision_flip.json"
+    },
+    {
+      "step": "performance",
+      "returncode": 0,
+      "seconds": 31.3,
+      "produces": "performance.json"
+    }
+  ],
+  "all_steps_ok": true,
+  "metrics_files_compared": 13,
+  "metrics_files_identical": [
+    "cleaning_rent.json",
+    "cleaning_sale.json",
+    "decision_flip.json",
+    "eda_summary.json",
+    "engine_example.json",
+    "engine_tests.json",
+    "forecast.json",
+    "leakage_audit.json",
+    "rent_models.json",
+    "sale_models.json",
+    "scenario_example.json",
+    "sensitivity_example.json",
+    "zip_lookup_comparison.json"
+  ],
+  "differences_vs_previous_run": {
+    "price_models_reproducibility.json": [
+      "new file"
+    ]
+  }
+}

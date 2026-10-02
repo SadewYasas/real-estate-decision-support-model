@@ -1,8 +1,4 @@
 {
-  "endpoint": "POST /api/analyse (price + rent + SHAP + forecasts + rent-vs-buy, 30-year table)",
-  "requirement": "full analysis under 3 s",
-  "requests": 100,
-  "warmup_excluded": 5,
   "status_codes": {
     "200": 105
   },
@@ -22,11 +18,5 @@
     "p95_ms": 143.5067149999668,
     "max_ms": 159.90170001168735,
     "under_3s_share": 1.0
-  },
-  "machine": {
-    "python": "3.14.7",
-    "platform": "Windows-11-10.0.26200-SP0",
-    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
-  },
-  "server": "Flask development server (werkzeug), single process"
+  }
 }

@@ -1,0 +1,9 @@
+3-bed, 2-bath, 1,800 sq ft house in Austin, TX: predicted price $374,575; predicted rent $2,600/month ($1,959 in 2019 x CPI factor 1.327 to 2025-09); g 3.09% (gbm_macro_constrained), q 3.57% (arima), r 6.35% (2025-09). Illustrative, not a valuation.
+  scenario            g       q       r    Delta(H)  rec   break-even
+  base            3.09%   3.57%   6.35%      46,063  buy   3
+  pessimistic    -0.60%   2.58%   6.35%     -23,788  rent  12   <- flips
+  optimistic     11.91%   6.94%   6.35%     290,615  buy   1
+  rate_rise       2.09%   3.56%   7.35%      10,102  buy   6
+  rate_cut        3.05%   2.39%   5.35%      55,387  buy   3
+  recession       3.08%   3.55%   5.85%      54,073  buy   3
+  inflation       3.29%   5.01%   7.10%      45,516  buy   4

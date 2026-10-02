@@ -1,0 +1,36 @@
+{
+  "sale": {
+    "rows_total": 38058,
+    "rows_test": 7622,
+    "rows_match_stored": true,
+    "selected_model": "catboost",
+    "test_metrics_recomputed": {
+      "mae_usd": 120035.56026583462,
+      "rmse_usd": 240673.84987657767,
+      "mape_usd": 0.21993384919196898,
+      "r2_usd": 0.82881893307414,
+      "r2_log": 0.8566917674562529,
+      "rmse_log": 0.2898597771864087
+    },
+    "max_abs_difference": 0.0,
+    "reproduced": true
+  },
+  "rent": {
+    "rows_total": 98827,
+    "rows_test": 19892,
+    "rows_match_stored": true,
+    "selected_model": "catboost",
+    "test_metrics_recomputed": {
+      "mae_usd": 208.85243314319587,
+      "rmse_usd": 364.3902257793118,
+      "mape_usd": 0.13628099527007584,
+      "r2_usd": 0.7915825682898445,
+      "r2_log": 0.823726194577508,
+      "rmse_log": 0.18267135595328787
+    },
+    "max_abs_difference": 0.0,
+    "ablation_max_abs_difference": 0.0,
+    "reproduced": true
+  },
+  "note": "Saved models re-scored on the test split rebuilt from freshly cleaned data; full retraining: python -m src.models.train_price_models --dataset <name> --fresh"
+}

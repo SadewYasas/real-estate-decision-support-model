@@ -1,0 +1,14 @@
+Base Delta(H=7) = 46,063 (buy), break-even year 3
+  House price growth g         -0.60% ->     -18,219       11.91% ->     270,440  <- flips the recommendation
+  Holding period H                4 y ->      11,459         10 y ->      81,055
+  Price P                    $292,193 ->      79,858     $456,957 ->      12,267
+  Monthly rent R               $2,246 ->      18,844       $2,954 ->      73,281
+  Mortgage rate r               5.35% ->      62,811        7.35% ->      29,099
+  Rent growth q                 2.58% ->      40,494        6.94% ->      66,238
+  Property tax tau              0.50% ->      57,887        1.50% ->      34,238
+  Maintenance m                 0.50% ->      57,887        1.50% ->      34,238
+  Discount rate k               4.00% ->      54,965        6.00% ->      37,805
+  Selling costs cs              4.00% ->      52,651        8.00% ->      39,474
+  Insurance h                   0.18% ->      50,201        0.53% ->      41,924
+  Buying costs cb               2.00% ->      49,808        4.00% ->      42,317
+  Down payment d               10.00% ->      43,323       30.00% ->      48,802

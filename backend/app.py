@@ -7,7 +7,6 @@ Endpoints (CLAUDE.md API contract):
   POST /api/scenario        base / pessimistic / optimistic / macro-shock cases
   GET  /api/forecast/<state>  latest house price and rent growth forecasts
   GET  /api/health
-  POST /predict             legacy route for the current front end (new sale model; deprecated)
 
 All models are loaded once at start-up. Every response carries the disclaimer.
 The old PPSq-based model has been removed from the API (kept in legacy/backend/ for reference).
@@ -25,7 +24,7 @@ from flask import Flask, jsonify, request  # noqa: E402
 from flask_cors import CORS  # noqa: E402
 from pydantic import ValidationError  # noqa: E402
 
-from backend.schemas import CompareIn, LegacyPredictIn, PropertyIn, ScenarioIn  # noqa: E402
+from backend.schemas import CompareIn, PropertyIn, ScenarioIn  # noqa: E402
 from src.api.service import AnalysisService, NotFound, to_jsonable  # noqa: E402
 from src.engine.rent_vs_buy import DISCLAIMER  # noqa: E402
 
@@ -127,16 +126,6 @@ def api_scenario():
 @app.get("/api/forecast/<state>")
 def api_forecast(state: str):
     return ok(service.forecast(state.strip().upper()))
-
-
-@app.post("/predict")
-def legacy_predict():
-    """Deprecated: kept so the current front end works until Step 9. Uses the new sale model."""
-    req = LegacyPredictIn.model_validate(body())
-    state = (req.State or "").strip().upper() or None
-    price = service.legacy_price(req.Zipcode.strip().zfill(5), state, req.Bedroom, req.Bathroom, req.Area)
-    return ok({"prediction_usd": round(price, 2),
-               "deprecated": "use POST /api/analyse"})
 
 
 if __name__ == "__main__":
