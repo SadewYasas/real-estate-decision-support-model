@@ -1,0 +1,54 @@
+{
+  "note": "Quantiles 5/25/50/75/95%. D1 over listings; ZCTAs in D1's 29 states, weighted by population.",
+  "density": {
+    "d1_zip_code_density": [
+      254.5,
+      905.4,
+      1588.7,
+      2727.0,
+      6956.0
+    ],
+    "zcta_people_per_sq_mile": [
+      41.4,
+      321.1,
+      1678.3,
+      4236.7,
+      14801.4
+    ],
+    "zcta_people_per_sq_km": [
+      16.0,
+      124.0,
+      648.0,
+      1635.8,
+      5714.9
+    ],
+    "conclusion": "D1 is people per square mile (medians agree; per sq km is ~2.6x too low). D1's spread is narrower: listing ZIPs exclude the most rural and densest areas."
+  },
+  "income": {
+    "d1_median_household_income": [
+      53554.0,
+      76690.0,
+      100587.0,
+      134948.0,
+      201229.0
+    ],
+    "acs_median_household_income_B19013": [
+      45917.1,
+      63308.7,
+      80093.3,
+      104375.0,
+      151486.3
+    ],
+    "acs_mean_household_income_B19025_over_B11001": [
+      62338.9,
+      82467.3,
+      102623.8,
+      132718.8,
+      197911.4
+    ],
+    "d1_profiles_above_acs_median_topcode_250001": 33,
+    "conclusion": "Despite its name, D1's income column behaves like MEAN household income: it exceeds the ACS median top-code and its distribution matches the ACS mean, ~25% above the ACS median. The sale model is fed mean_income."
+  },
+  "sale_model_income_column": "mean_income",
+  "acs_vintage": "ACS 2020-2024 5-year"
+}

@@ -1,0 +1,32 @@
+{
+  "endpoint": "POST /api/analyse (price + rent + SHAP + forecasts + rent-vs-buy, 30-year table)",
+  "requirement": "full analysis under 3 s",
+  "requests": 100,
+  "warmup_excluded": 5,
+  "status_codes": {
+    "200": 105
+  },
+  "startup_model_loading_s": 1.46,
+  "in_process": {
+    "n": 100,
+    "mean_ms": 129.01753700018162,
+    "median_ms": 128.58935000258498,
+    "p95_ms": 135.9155549769639,
+    "max_ms": 152.27930000401102,
+    "under_3s_share": 1.0
+  },
+  "http_localhost": {
+    "n": 100,
+    "mean_ms": 165.25092499912716,
+    "median_ms": 162.2932500031311,
+    "p95_ms": 186.03669501171677,
+    "max_ms": 261.837199999718,
+    "under_3s_share": 1.0
+  },
+  "machine": {
+    "python": "3.14.7",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "server": "Flask development server (werkzeug), single process"
+}
